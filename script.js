@@ -180,6 +180,8 @@ function newSong(song) {
 
     fetchAlbumCover(nowPlaying.path);
 
+    document.title = nowPlaying.name + " - " + nowPlaying.artist;
+
     document.getElementById("title").innerText = nowPlaying.name;
     document.getElementById("artist").innerText = nowPlaying.artist;
     document.getElementById("play").style.opacity = "100%";
@@ -223,6 +225,8 @@ function audioStop() {
     audioPause();
     nowPlaying.element.querySelector("img").src = "";
     nowPlaying = { blank: true };
+
+    document.title = "Mp3 Player";
 
     document.getElementById("title").innerText = "";
     document.getElementById("artist").innerText = "";
