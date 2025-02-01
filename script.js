@@ -77,6 +77,21 @@ async function loadLibrary() {
             document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected"));
         }
     });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === " " && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+            event.preventDefault();
+            toggleAudio();
+        }
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowLeft" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) previousSong();
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowRight" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) nextSong();
+    });
 }
 
 async function fetchAlbumCover(mp3Path) {
