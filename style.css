@@ -38,7 +38,7 @@
 main {
   display: grid;
   grid-template-rows: repeat(12, 1fr);
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   gap: 0;
   width: calc(100vw - 20px);
   height: calc(100vh - 20px);;
@@ -65,7 +65,7 @@ main {
   }
 
   #queue {
-    grid-area: 2 / 4 / 12 / 10;
+    grid-area: 2 / 5 / 12 / 14;
 
     table {
       width: 100%;
@@ -134,17 +134,17 @@ main {
   }
 
   #search {
-    grid-area: 1 / 4 / 2 / 10;
+    grid-area: 1 / 5 / 2 / 14;
     background-color: rgba(95,213,146, 0.5);
   }
 
   #tabs {
-    grid-area: 1 / 1 / 2 / 4;
+    grid-area: 1 / 1 / 2 / 5;
     background-color: rgba(44,160,10, 0.5);
   }
 
   #song {
-    grid-area: 12 / 1 / 13 / 4;
+    grid-area: 12 / 1 / 13 / 5;
     background-color: var(--background);
 
     display: flex;
@@ -198,7 +198,7 @@ main {
   }
 
   #controls {
-    grid-area: 12 / 4 / 13 / 10;
+    grid-area: 12 / 5 / 13 / 14;
     background-color: var(--background);
 
     display: flex;
@@ -278,7 +278,7 @@ main {
   #sidebar {	
     font-size: large;
   
-    grid-area: 2 / 1 / 12 / 4;
+    grid-area: 2 / 1 / 12 / 5;
 
     /* https://codepen.io/MoritzGlantz/pen/PobErJB */
 
