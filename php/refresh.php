@@ -24,23 +24,32 @@ function getLibrary($directory) {
 
             $library[str_replace('_', '/', $artist)][str_replace('_', '/', $album)] = [];
 
-            foreach (scandir($albumPath) as $song) {
+            $songs = scandir($albumPath);
+            natsort($songs);
+
+            foreach ($songs as $song) {
                 if (pathinfo($song, PATHINFO_EXTENSION) !== 'mp3') continue;
 
                 $getID3 = new getID3();
                 $fileInfo = $getID3->analyze($albumPath . DIRECTORY_SEPARATOR . $song);
 
-                $length = isset($fileInfo['playtime_seconds']) ? $fileInfo['playtime_seconds'] : "0";
+                $l = isset($fileInfo['playtime_seconds']) ? $fileInfo['playtime_seconds'] : "0";
 
-                $art = isset($fileInfo['tags']['id3v2']['artist'][0]) ? $fileInfo['tags']['id3v2']['artist'][0] : str_replace('_', '/', $artist);
+                $n = ($song[1] == " ") ? "0$song" : $song;
+                $t = substr($n, 0, 2);
+
+                if($n[3] == "-") $n = substr($n, 5); else $n = substr($n, 2);
+                $n = substr(str_replace('_', '/', $n), 0, -4);
+
+                $a = isset($fileInfo['tags']['id3v2']['artist'][0]) ? $fileInfo['tags']['id3v2']['artist'][0] : str_replace('_', '/', $artist);
 
                 $library[str_replace('_', '/', $artist)][str_replace('_', '/', $album)][] = array(
-                    "name" => substr((explode(" ", str_replace('_', '/', $song), 2)[1] ?? ""), 0, -4),
+                    "name" => $n,
                     "path" => "/mp3/$artist/$album/$song",
-                    "artist" => $art,
+                    "artist" => $a,
                     "album" => str_replace('_', '/', $album),
-                    "track" => substr($song, 0, 2),
-                    "length" => $length
+                    "track" => $t,
+                    "length" => $l
                 );
             }
         }

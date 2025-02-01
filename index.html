@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Mp3 Player</title>
+    <title>Mp3 Player</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
@@ -29,7 +29,7 @@
         <section id="search">search</section>
         <section id="tabs">tabs</section>
         <section id="song">
-            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" onclick="document.getElementById('coverDialog').showModal()" style="width: 0;">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" id="miniCover" onclick="document.getElementById('coverDialog').showModal()" style="width: 0;">
             <dialog id="coverDialog">
                 <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" onclick="document.getElementById('coverDialog').close()">
             </dialog>
@@ -40,9 +40,10 @@
         </section>
         <section id="controls">
             <div id="buttons">
-                <img src="/assets/icons/back.png" alt="back" id="back">
-                <img src="/assets/icons/play.png" alt="play" id="play" onclick="toggleAudio()" style="opacity: 60;">
-                <img src="/assets/icons/next.png" alt="next" id="next">
+                <img src="/assets/icons/back.png" alt="back" id="back" onclick="previousSong()">
+                <img src="/assets/icons/play.png" alt="play" id="play" onclick="toggleAudio()">
+                <img src="/assets/icons/stop.png" alt="play" id="stop" onclick="audioStop()">
+                <img src="/assets/icons/next.png" alt="next" id="next" onclick="nextSong()">
             </div>
 
             <div id="seek">

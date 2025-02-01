@@ -35,7 +35,6 @@
 }
 
 
-
 main {
   display: grid;
   grid-template-rows: repeat(12, 1fr);
@@ -237,6 +236,9 @@ main {
 
       #play {
         height: 120%;
+      }
+      #stop {
+        height: 140%;
       }
     }
 

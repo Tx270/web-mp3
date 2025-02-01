@@ -93,6 +93,9 @@ function addToQueue(songs) {
             row.insertCell(3).innerHTML = song.album;
             row.insertCell(4).innerHTML = formatTime(song.length);
             song.element = row;
+            song.queueId = queue.length;
+
+            queue.push(song);
 
             row.ondblclick = function(){ newSong(song); };
 
@@ -112,6 +115,7 @@ function newSong(song) {
     try {
         nowPlaying.element.querySelector("img").src = "";   
         nowPlaying.audio.pause();
+        stopUpdatingTime();
     } catch {}
 
     nowPlaying = song;
@@ -126,11 +130,57 @@ function newSong(song) {
     document.getElementById("play").classList.add("playing");
     document.getElementById("progressTotal").innerText = formatTime(nowPlaying.length);
 
+    nowPlaying.audio.addEventListener("ended", nextSong);
+
     audioPlay();
+}
+
+
+function nextSong() {
+    if(nowPlaying.blank) return;
+    
+    audioPause();
+
+    try {
+        newSong(queue[nowPlaying.queueId + 1]);
+    } catch {
+        audioStop();
+    }
+}
+
+function previousSong() {
+    if(nowPlaying.blank) return;
+
+    audioPause();
+
+    if(nowPlaying.audio.currentTime > 3 || !queue[nowPlaying.queueId - 1]) {
+        nowPlaying.audio.currentTime = 0;
+        audioPlay();
+    } else {
+        newSong(queue[nowPlaying.queueId - 1]);
+    }
+}
+
+function audioStop() {
+    if(nowPlaying.blank) return;
+
+    audioPause();
+    nowPlaying.element.querySelector("img").src = "";
+    nowPlaying = { blank: true };
+
+    document.getElementById("title").innerText = "";
+    document.getElementById("artist").innerText = "";
+    document.getElementById("progressTotal").innerText = "0:00";
+    document.getElementById("progressTime").innerText = "0:00";
+    document.getElementById("progress").value = 0;
+    document.getElementById("progress").style.background = "linear-gradient(to right, var(--accent2) 50%, var(--accent2) 50%)";
+
+    document.getElementById("miniCover").style.width = "0";
 }
 
 function audioPlay() {
     if(nowPlaying.blank) return;
+    
     nowPlaying.audio.play();
 
     startUpdatingTime();
@@ -141,6 +191,7 @@ function audioPlay() {
 
 function audioPause() {
     if(nowPlaying.blank) return;
+
     nowPlaying.audio.pause();
 
     stopUpdatingTime();
@@ -151,6 +202,7 @@ function audioPause() {
 
 function toggleAudio() {
     if(nowPlaying.blank) return;
+
     document.getElementById("play").classList.toggle("playing");
 
     if (document.getElementById("play").classList.contains("playing")) {
@@ -180,9 +232,13 @@ function stopUpdatingTime() {
 
 
 function updateTime() {
-    if(nowPlaying.blank) return;
-
     var progress = document.getElementById("progress");
+
+    if(nowPlaying.blank) {
+        progress.value = 0;
+        return;
+    };
+
     progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
     nowPlaying.audio.currentTime = (progress.value/100) * nowPlaying.audio.duration;
 }
@@ -194,7 +250,7 @@ async function fetchAlbumCover(mp3Path) {
     const response = await fetch(`/php/cover.php?file=${encodeURIComponent(mp3Path)}`);
     
     if (!response.ok) {
-        console.error("Nie znaleziono okładki");
+        document.querySelectorAll(".cover").forEach(element => { element.src = "/assets/empty.png"; });
         return;
     }
 
