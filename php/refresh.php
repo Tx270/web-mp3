@@ -2,13 +2,6 @@
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/james-heinrich/getid3/getid3/getid3.php';
 
 
-function getDuration($mp3File) {
-    
-
-    return false;
-}
-
-
 function getLibrary($directory) {
     $library = [];
 
@@ -33,6 +26,17 @@ function getLibrary($directory) {
                 $getID3 = new getID3();
                 $fileInfo = $getID3->analyze($albumPath . DIRECTORY_SEPARATOR . $song);
 
+                $title = null;
+                if (!empty($fileInfo['tags'])) {
+                    if (!empty($fileInfo['tags']['id3v2']['title'][0])) {
+                        $title = $fileInfo['tags']['id3v2']['title'][0];
+                    } elseif (!empty($fileInfo['tags']['id3v1']['title'][0])) {
+                        $title = $fileInfo['tags']['id3v1']['title'][0];
+                    } elseif (!empty($fileInfo['comments']['title'][0])) {
+                        $title = $fileInfo['comments']['title'][0];
+                    }
+                }
+
                 $l = isset($fileInfo['playtime_seconds']) ? $fileInfo['playtime_seconds'] : "0";
 
                 $n = ($song[1] == " ") ? "0$song" : $song;
@@ -44,7 +48,7 @@ function getLibrary($directory) {
                 $a = isset($fileInfo['tags']['id3v2']['artist'][0]) ? $fileInfo['tags']['id3v2']['artist'][0] : str_replace('_', '/', $artist);
 
                 $library[str_replace('_', '/', $artist)][str_replace('_', '/', $album)][] = array(
-                    "name" => $n,
+                    "name" => $title ?? $n,
                     "path" => "/mp3/$artist/$album/$song",
                     "artist" => $a,
                     "album" => str_replace('_', '/', $album),
