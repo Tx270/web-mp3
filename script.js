@@ -50,7 +50,7 @@ async function loadLibrary() {
 
     } catch (error) {
         console.error('Błąd wczytywania pliku JSON:', error);
-        document.getElementById('music-library').textContent = "Błąd wczytywania danych.";
+        document.getElementById('sidebar').innerHTML = "Error loading mp3 library. <br> Try to use library refresh.";
     }
 
 
@@ -180,6 +180,8 @@ function updateTime() {
 
 
 async function fetchAlbumCover(mp3Path) {
+    document.querySelectorAll(".cover").forEach(element => { element.style.width = "auto"; });
+
     const response = await fetch(`/php/cover.php?file=${encodeURIComponent(mp3Path)}`);
     
     if (!response.ok) {
@@ -190,9 +192,7 @@ async function fetchAlbumCover(mp3Path) {
     const blob = await response.blob();
     const imgUrl = URL.createObjectURL(blob);
     
-    document.querySelectorAll(".cover").forEach(element => {
-        element.src = imgUrl;
-    })
+    document.querySelectorAll(".cover").forEach(element => { element.src = imgUrl; });
 }
 
 

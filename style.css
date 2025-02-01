@@ -256,7 +256,6 @@ main {
 
         background: linear-gradient(to right, #fff 0%, var(--accent2) 0%);
         outline: none;
-        transition: background 0.2s;
       }
 
       input[type='range']::-webkit-slider-thumb {
