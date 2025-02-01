@@ -138,30 +138,32 @@ function formatTime(seconds) {
 
 
 function addToQueue(songs) {
+    songs = songs.filter(e => e.track);
+
     songs.forEach(song => {
-        if(song.track) {
-            let table = document.getElementById("queue-tbody");
-            var row = table.insertRow(-1);
-            row.insertCell(0).innerHTML = "<img></img>" + song.track;
-            row.insertCell(1).innerHTML = song.name;
-            row.insertCell(2).innerHTML = song.artist;
-            row.insertCell(3).innerHTML = song.album;
-            row.insertCell(4).innerHTML = formatTime(song.length);
-            song.element = row;
-            song.queueId = queue.length;
+        let table = document.getElementById("queue-tbody");
+        var row = table.insertRow(-1);
+        row.insertCell(0).innerHTML = "<img></img>" + song.track;
+        row.insertCell(1).innerHTML = song.name;
+        row.insertCell(2).innerHTML = song.artist;
+        row.insertCell(3).innerHTML = song.album;
+        row.insertCell(4).innerHTML = formatTime(song.length);
+        song.element = row;
+        song.queueId = queue.length;
 
-            queue.push(song);
+        queue.push(song);
 
-            row.ondblclick = function(){ newSong(song); };
+        row.ondblclick = function(){ newSong(song); };
 
-            row.classList.add('selectable');
+        row.classList.add('selectable');
 
-            row.addEventListener("mousedown", (event) => {
-                document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
-                event.target.parentElement.classList.add("selected");
-            });
-        }
+        row.addEventListener("mousedown", (event) => {
+            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
+            event.target.parentElement.classList.add("selected");
+        });
     });
+
+    if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) newSong(songs[0]);
 }
 
 function newSong(song) {
@@ -194,11 +196,10 @@ function nextSong() {
     
     audioPause();
 
-    try {
+    if(queue[nowPlaying.queueId + 1]) 
         newSong(queue[nowPlaying.queueId + 1]);
-    } catch {
+    else 
         audioStop();
-    }
 }
 
 function previousSong() {
