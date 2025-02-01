@@ -6,11 +6,22 @@ async function loadLibrary() {
     try {
         const response = await fetch('library.json');
         const library = await response.json();
+        var letter = "`";
 
         const container = document.getElementById('sidebar');
         container.innerHTML = '';
 
         Object.entries(library).forEach(([artist, albums]) => {
+            if(artist[0].toLowerCase() != letter) {
+                letter = String.fromCharCode(letter.charCodeAt(0) + 1);
+                // container.innerHTML += "<span class='braker'>" + letter.toUpperCase() + "</span><hr>";
+                var s = document.createElement('span')
+                s.innerText = letter.toUpperCase();
+                s.classList.add("braker");
+                container.appendChild(s);
+                container.appendChild(document.createElement('hr'));
+            }
+
             const artistDetails = document.createElement('details');
             artistDetails.classList.add('artist');
 
@@ -68,8 +79,6 @@ async function loadLibrary() {
     });
 }
 
-
-loadLibrary();
 
 
 

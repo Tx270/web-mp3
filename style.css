@@ -332,6 +332,20 @@ main {
         filter: brightness(0.9);
       }
     }
+
+    .braker {
+      display: block;
+      line-height: 30px;
+      margin-top: 20px;
+      margin-left: 5px;
+      font-size: 15px;
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    hr {
+      border: 1px solid #b3b3b37a;
+    }
   
     .selected {
       background-color: var(--highlight);
