@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Mp3 Player</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+</head>
+<body>
+    <main>
+        <section id="sidebar"></section>
+        <section id="queue">
+            <table id="queue-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Artist</th>
+                        <th>Album</th>
+                        <th>Length</th>
+                    </tr>
+                </thead>
+                <tbody id="queue-tbody">
+                </tbody>
+            </table>
+        </section>
+        <section id="search">search</section>
+        <section id="tabs">tabs</section>
+        <section id="song">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" onclick="document.getElementById('coverDialog').showModal()">
+            <dialog id="coverDialog">
+                <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" onclick="document.getElementById('coverDialog').close()">
+            </dialog>
+            <div>
+                <span id="title"></span>
+                <span id="artist"></span>
+            </div>
+        </section>
+        <section id="controls">
+            <div id="buttons">
+                <img src="/assets/icons/back.png" alt="back" id="back">
+                <img src="/assets/icons/play.png" alt="play" id="play" onclick="toggleAudio()" style="opacity: 60;">
+                <img src="/assets/icons/next.png" alt="next" id="next">
+            </div>
+
+            <div id="seek">
+                <span id="progressTime">0:00</span>
+                <input type="range" min="0" step="0.01" value="0" oninput="updateTime()" id="progress">
+                <span id="progressTotal">0:00</span>
+            </div>
+            
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

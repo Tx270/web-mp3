@@ -1,0 +1,341 @@
+:root {
+  --background: #000000;
+  --main: #121212;
+  --text: #fff;
+  --accent: #b3b3b3;
+  --accent2: #4d4c4d;
+  --accent-hover: #a1a1a1;
+  --highlight: #35353573;
+  --highlight-light: #35353527;
+  --highlight-heavy: #353535a2;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b3b3b371;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a171; 
+}
+
+::backdrop {
+  background-color: black;
+  opacity: 0.75;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+
+
+main {
+  display: grid;
+  grid-template-rows: repeat(12, 1fr);
+  grid-template-columns: repeat(9, 1fr);
+  gap: 0;
+  width: calc(100vw - 20px);
+  height: calc(100vh - 20px);;
+
+  padding: 10px;
+
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+
+
+  section {
+    padding: 20px 30px;
+    margin: 5px;
+    background-color: var(--main);
+    border-radius: 15px;
+
+    overflow: auto;
+    clip-path: inset(0 0 0 0 round 15px);
+
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  #queue {
+    grid-area: 2 / 4 / 12 / 10;
+
+    table {
+      width: 100%;
+      text-align: center;
+      border-collapse: collapse;
+
+      thead {
+        height: 40px;
+        position: sticky;
+        top: -20px;
+        background-color: var(--main);
+        box-shadow: inset 0 0px 0 #000, inset 0 -2px 0 var(--highlight);
+        z-index: 2;
+
+        th {
+          font-size: 15px;
+          font-weight: bold;
+          text-align: center;
+        }
+
+        tr {
+          th:nth-child(1) {
+            width: 10%;
+          }
+          th:nth-child(2) {
+            width: 20%;
+          }
+          th:nth-child(3) {
+            width: 20%;
+          }
+          th:nth-child(4) {
+            width: 20%;
+          }
+          th:nth-child(5) {
+            width: 10%;
+          }
+        }
+      }
+
+      tbody {
+        td {
+          padding: 5px 5px;
+          font-size: 13px;
+          cursor: pointer;
+          position: relative;
+
+          img {
+            position: absolute;
+            padding: 0.2rem 0;
+            height: 0.7rem;
+            left: 12px;
+            pointer-events: none;
+            filter: invert(100);
+          }
+        }
+  
+        tr:nth-child(even) {
+          background: var(--highlight-light);
+        }
+
+        .selected {
+          background-color: var(--highlight) !important;
+        }
+      }
+    }
+  }
+
+  #search {
+    grid-area: 1 / 4 / 2 / 10;
+    background-color: rgba(95,213,146, 0.5);
+  }
+
+  #tabs {
+    grid-area: 1 / 1 / 2 / 4;
+    background-color: rgba(44,160,10, 0.5);
+  }
+
+  #song {
+    grid-area: 12 / 1 / 13 / 4;
+    background-color: var(--background);
+
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+    overflow: hidden;
+    padding-left: 45px;
+
+    #coverDialog {
+      height: 70vh;
+      width: 70vh;
+      margin: auto;
+      background-color: #0000;
+      overflow: hidden;
+      border: none;
+
+      img {
+        height: 100%;
+        cursor: pointer;
+      }
+    }
+
+    img {
+      height: 200%;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: left;
+      flex-direction: column;
+
+      font-size: 12px;
+
+      span {
+        padding: 1px 15px;
+      }
+
+      #title {
+        font-weight: 900;
+        font-size: 15px;
+      }
+
+      #artist {
+        filter: brightness(0.7);
+      }
+    }
+  }
+
+  #controls {
+    grid-area: 12 / 4 / 13 / 10;
+    background-color: var(--background);
+
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+
+    overflow: hidden;
+
+    div {
+      width: 80%;
+      height: 60%;
+      margin: 5px;
+      position: relative;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #buttons {
+      margin-top: -8px;
+
+      img {
+        height: 90%;
+        filter: invert(100);
+        margin: 0 10px;
+        cursor: pointer;
+
+        &:hover {
+          filter: invert(100) brightness(0.9);
+          scale: 1.15;
+        }
+      }
+
+      #play {
+        height: 120%;
+      }
+    }
+
+    #seek {
+      span {
+        width: 5%;
+        font-size: 14px;
+      }
+
+      input[type="range"] {
+        height: 30%;
+        margin: 15px;
+        width: 90%;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        border-radius: 10px;
+
+        background: linear-gradient(to right, #fff 0%, var(--accent2) 0%);
+        outline: none;
+        transition: background 0.2s;
+      }
+
+      input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none !important;
+        background: transparent;
+        height:13px;
+        width:13px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+
+      &:hover input[type='range']::-webkit-slider-thumb {
+        background-color: #fff;
+      }
+    }
+  }
+  
+  #sidebar {	
+    font-size: large;
+  
+    grid-area: 2 / 1 / 12 / 4;
+
+    /* https://codepen.io/MoritzGlantz/pen/PobErJB */
+
+    summary {
+      padding: 3px 1.2rem;
+      padding-left: 30px;
+      border-radius: 5px;
+      display: block;
+      position: relative;
+      cursor: pointer;
+    }
+
+    summary:before {
+      content: "";
+      border-width: 0.4rem;
+      border-style: solid;
+      border-color: transparent transparent transparent #fff;
+      position: absolute;
+      top: 0.65rem;
+      left: 0.9rem;
+      transform: rotate(0);
+      transform-origin: 0.2rem 50%;
+      transition: 0.25s transform ease;
+    }
+
+    details[open] > summary:before {
+      transform: rotate(90deg);
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details summary:hover {
+      filter: brightness(0.9);
+    }
+  
+    .album {
+      margin: 0px 30px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .song {
+      margin: 0 33px;
+      cursor: pointer;
+      width: 90%;
+      padding: 3px 5px 3px 30px;
+      text-indent: -20px;
+      border-radius: 5px;
+      &:hover {
+        filter: brightness(0.9);
+      }
+    }
+  
+    .selected {
+      background-color: var(--highlight);
+    }
+  }
+}
