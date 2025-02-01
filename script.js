@@ -79,6 +79,61 @@ async function loadLibrary() {
     });
 }
 
+async function fetchAlbumCover(mp3Path) {
+    document.querySelectorAll(".cover").forEach(element => { element.style.width = "auto"; });
+
+    const response = await fetch(`/php/cover.php?file=${encodeURIComponent(mp3Path)}`);
+    
+    if (!response.ok) {
+        document.querySelectorAll(".cover").forEach(element => { element.src = "/assets/empty.png"; });
+        return;
+    }
+
+    const blob = await response.blob();
+    const imgUrl = URL.createObjectURL(blob);
+    
+    document.querySelectorAll(".cover").forEach(element => { element.src = imgUrl; });
+}
+
+
+
+function startUpdatingTime() {
+    if (!nowPlaying.interval) {
+        nowPlaying.interval = setInterval(function () {
+            const progress = document.getElementById("progress");
+            progress.value = (nowPlaying.audio.currentTime / nowPlaying.audio.duration) * 100;
+            progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
+            document.getElementById("progressTime").textContent = formatTime(nowPlaying.audio.currentTime);
+        }, 1000);
+    }
+}
+
+function stopUpdatingTime() {
+    if (nowPlaying.interval) {
+        clearInterval(nowPlaying.interval);
+        nowPlaying.interval = null;
+    }
+}
+
+function updateTime() {
+    var progress = document.getElementById("progress");
+
+    if(nowPlaying.blank) {
+        progress.value = 0;
+        return;
+    };
+
+    progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
+    nowPlaying.audio.currentTime = (progress.value/100) * nowPlaying.audio.duration;
+}
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+}
+
+
 
 
 
@@ -109,7 +164,6 @@ function addToQueue(songs) {
     });
 }
 
-
 function newSong(song) {
     // song.element.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--highlight-heavy');
     try {
@@ -135,7 +189,6 @@ function newSong(song) {
     audioPlay();
 }
 
-
 function nextSong() {
     if(nowPlaying.blank) return;
     
@@ -160,6 +213,8 @@ function previousSong() {
         newSong(queue[nowPlaying.queueId - 1]);
     }
 }
+
+
 
 function audioStop() {
     if(nowPlaying.blank) return;
@@ -210,59 +265,4 @@ function toggleAudio() {
     } else {
         audioPause();
     }
-}
-
-function startUpdatingTime() {
-    if (!nowPlaying.interval) {
-        nowPlaying.interval = setInterval(function () {
-            const progress = document.getElementById("progress");
-            progress.value = (nowPlaying.audio.currentTime / nowPlaying.audio.duration) * 100;
-            progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
-            document.getElementById("progressTime").textContent = formatTime(nowPlaying.audio.currentTime);
-        }, 1000);
-    }
-}
-
-function stopUpdatingTime() {
-    if (nowPlaying.interval) {
-        clearInterval(nowPlaying.interval);
-        nowPlaying.interval = null;
-    }
-}
-
-
-function updateTime() {
-    var progress = document.getElementById("progress");
-
-    if(nowPlaying.blank) {
-        progress.value = 0;
-        return;
-    };
-
-    progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
-    nowPlaying.audio.currentTime = (progress.value/100) * nowPlaying.audio.duration;
-}
-
-
-async function fetchAlbumCover(mp3Path) {
-    document.querySelectorAll(".cover").forEach(element => { element.style.width = "auto"; });
-
-    const response = await fetch(`/php/cover.php?file=${encodeURIComponent(mp3Path)}`);
-    
-    if (!response.ok) {
-        document.querySelectorAll(".cover").forEach(element => { element.src = "/assets/empty.png"; });
-        return;
-    }
-
-    const blob = await response.blob();
-    const imgUrl = URL.createObjectURL(blob);
-    
-    document.querySelectorAll(".cover").forEach(element => { element.src = imgUrl; });
-}
-
-
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs.toString().padStart(2, "0")}`;
 }
