@@ -41,10 +41,12 @@
             </table>
         </section>
         <section id="tabs">
-            <button class="tab-button active" onclick="openTab(event, 'Library')">Library</button>
-            <button class="tab-button" onclick="openTab(event, 'Playlists')">Playlists</button>
-            <button class="tab-button" onclick="openTab(event, 'Search')">Search</button>
-            <button class="tab-button" onclick="openTab(event, 'Favorites')">Favorites</button>
+            <div id="tab-buttons">
+                <button class="tab-button active" onclick="openTab(event, 'Library')">Library</button>
+                <button class="tab-button" onclick="openTab(event, 'Playlists')">Playlists</button>
+                <button class="tab-button" onclick="openTab(event, 'Search')">Search</button>
+                <button class="tab-button" onclick="openTab(event, 'Favorites')">Favorites</button>
+            </div>
         </section>
         <section id="song">
             <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" id="miniCover" onclick="document.getElementById('coverDialog').showModal()" style="width: 0;">
