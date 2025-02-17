@@ -2,6 +2,52 @@ var nowPlaying = { blank: true };
 var queue = [];
 
 
+
+
+function addListeners() {
+    document.querySelectorAll(".selectable").forEach(span => {
+        span.addEventListener("mousedown", (event) => {
+            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
+            event.target.classList.add("selected");
+        });
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!event.target.classList.contains("selectable") && event.target.nodeName !== "TD" && !event.target.classList.contains("contextbtn")) {
+            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected"));
+        }
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === " " && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+            event.preventDefault();
+            toggleAudio();
+        }
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowLeft" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) previousSong();
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowRight" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) nextSong();
+    });
+
+
+    document.addEventListener("click", (e) => {
+        if(!e.target.classList.contains("contextbtn")) {
+            let menus = document.querySelectorAll(".context-menu");
+            menus.forEach(menu => {
+                menu.style.display = "none";
+            });
+        }
+    });
+
+    document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+    });
+}
+
 async function loadLibrary() {
     try {
         const response = await fetch('library.json');
@@ -69,34 +115,7 @@ async function loadLibrary() {
         document.getElementById('sidebar').innerHTML = "Error loading mp3 library. <br> Try to use library refresh.";
     }
 
-
-    document.querySelectorAll(".selectable").forEach(span => {
-        span.addEventListener("mousedown", (event) => {
-            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
-            event.target.classList.add("selected");
-        });
-    });
-
-    document.addEventListener("click", (event) => {
-        if (!event.target.classList.contains("selectable") && event.target.nodeName !== "TD") {
-            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected"));
-        }
-    });
-
-    document.addEventListener("keydown", function(event) {
-        if (event.key === " " && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
-            event.preventDefault();
-            toggleAudio();
-        }
-    });
-
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "ArrowLeft" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) previousSong();
-    });
-
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "ArrowRight" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) nextSong();
-    });
+    addListeners();
 }
 
 async function fetchAlbumCover(mp3Path) {
@@ -167,6 +186,34 @@ function formatTime(seconds) {
     return `${minutes}:${secs.toString().padStart(2, "0")}`;
 }
 
+function contextmenu(e, id) {
+    e.preventDefault();
+    
+    let menu = document.getElementById(id);
+
+    menu.style.display = "block";
+    
+    let windowWidth = window.innerWidth;
+    let windowHeight = window.innerHeight;
+
+    let menuWidth = menu.offsetWidth;
+    let menuHeight = menu.offsetHeight;
+
+    let posX = e.pageX;
+    let posY = e.pageY;
+
+    if (posX + menuWidth > windowWidth) {
+        posX -= menuWidth;
+    }
+
+    if (posY + menuHeight > windowHeight) {
+        posY -= menuHeight;
+    }
+
+
+    menu.style.left = `${posX}px`;
+    menu.style.top = `${posY}px`;
+}
 
 
 
@@ -175,8 +222,7 @@ function addToQueue(songs) {
     songs = songs.filter(e => e.track);
 
     songs.forEach(song => {
-        let table = document.getElementById("queue-tbody");
-        var row = table.insertRow(-1);
+        var row = document.getElementById("queue-tbody").insertRow(-1);
         row.insertCell(0).innerHTML = "<img></img>" + song.track;
         row.insertCell(1).innerHTML = song.name;
         row.insertCell(2).innerHTML = song.artist;
@@ -190,11 +236,22 @@ function addToQueue(songs) {
         row.ondblclick = function(){ newSong(song); };
 
         row.classList.add('selectable');
+        row.classList.add("custom-context");
+        row.setAttribute("data-menu", "queueSongMenu");
 
         row.addEventListener("mousedown", (event) => {
             document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
             event.target.parentElement.classList.add("selected");
         });
+
+        row.addEventListener("contextmenu", (e) => { contextmenu(e, row.getAttribute("data-menu")); });
+
+        
+        let btn = document.createElement("span");
+        btn.innerText = "⋮";
+        btn.classList.add("contextbtn");
+        btn.addEventListener("click", (e) => { contextmenu(e, "queueSongMenu"); });
+        row.appendChild(btn);
     });
 
     if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) newSong(songs[0]);
