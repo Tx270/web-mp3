@@ -10,7 +10,21 @@
 </head>
 <body onload="loadLibrary()">
     <main>
-        <section id="sidebar"></section>
+        <section id="sidebar">
+            <div id="Library" class="tab-content"></div>
+            <div id="Playlists" class="tab-content" style="display:none">
+                <h3>Playlists</h3>
+                <p>Your playlists.</p>
+            </div>
+            <div id="Search" class="tab-content" style="display:none">
+                <h3>Search</h3>
+                <p>Search your favorite songs.</p>
+            </div>
+            <div id="Favorites" class="tab-content" style="display:none">
+                <h3>Favorites</h3>
+                <p>Your favorite songs.</p>
+            </div>
+        </section>
         <section id="queue">
             <table id="queue-table">
                 <thead>
@@ -27,7 +41,12 @@
             </table>
         </section>
         <section id="search">search</section>
-        <section id="tabs">tabs</section>
+        <section id="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'Library')">Library</button>
+            <button class="tab-button" onclick="openTab(event, 'Playlists')">Playlists</button>
+            <button class="tab-button" onclick="openTab(event, 'Search')">Search</button>
+            <button class="tab-button" onclick="openTab(event, 'Favorites')">Favorites</button>
+        </section>
         <section id="song">
             <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" id="miniCover" onclick="document.getElementById('coverDialog').showModal()" style="width: 0;">
             <dialog id="coverDialog">

@@ -8,16 +8,21 @@ async function loadLibrary() {
         const library = await response.json();
         var letter = "`";
 
-        const container = document.getElementById('sidebar');
+        const container = document.getElementById('Library');
         container.innerHTML = '';
+
+        first = true;
 
         Object.entries(library).forEach(([artist, albums]) => {
             if(artist[0].toLowerCase() != letter) {
                 letter = String.fromCharCode(letter.charCodeAt(0) + 1);
-                // container.innerHTML += "<span class='braker'>" + letter.toUpperCase() + "</span><hr>";
                 var s = document.createElement('span')
                 s.innerText = letter.toUpperCase();
                 s.classList.add("braker");
+                if(first) {
+                    first = false;
+                    s.style.marginTop = "0";
+                }
                 container.appendChild(s);
                 container.appendChild(document.createElement('hr'));
             }
@@ -108,6 +113,20 @@ async function fetchAlbumCover(mp3Path) {
     const imgUrl = URL.createObjectURL(blob);
     
     document.querySelectorAll(".cover").forEach(element => { element.src = imgUrl; });
+}
+
+function openTab(evt, tabName) {
+    
+    Array.from(document.getElementsByClassName("tab-content")).forEach(content => {
+        content.style.display = "none";
+    });
+
+    Array.from(document.getElementsByClassName("tab-button")).forEach(button => {
+        button.className = button.className.replace(" active", "");
+    });
+
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
 }
 
 
