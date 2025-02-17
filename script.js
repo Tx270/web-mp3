@@ -202,6 +202,7 @@ function newSong(song) {
     document.getElementById("play").style.opacity = "100%";
     document.getElementById("play").classList.add("playing");
     document.getElementById("progressTotal").innerText = formatTime(nowPlaying.length);
+    document.getElementById("progress").classList.remove('disabledRange');
 
     nowPlaying.audio.addEventListener("ended", nextSong);
 
@@ -249,6 +250,7 @@ function audioStop() {
     document.getElementById("progressTime").innerText = "0:00";
     document.getElementById("progress").value = 0;
     document.getElementById("progress").style.background = "linear-gradient(to right, var(--accent2) 50%, var(--accent2) 50%)";
+    document.getElementById("progress").classList.add('disabledRange');
 
     document.getElementById("miniCover").style.width = "0";
 }

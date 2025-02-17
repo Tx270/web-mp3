@@ -272,6 +272,10 @@ main {
       &:hover input[type='range']::-webkit-slider-thumb {
         background-color: #fff;
       }
+
+      .disabledRange::-webkit-slider-thumb {
+        display: none;
+      }
     }
   }
   
