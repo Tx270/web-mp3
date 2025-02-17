@@ -66,7 +66,7 @@ main {
   }
 
   #queue {
-    grid-area: 2 / 5 / 12 / 14;
+    grid-area: 1 / 5 / 12 / 14;
 
     table {
       width: 100%;
@@ -132,11 +132,6 @@ main {
         }
       }
     }
-  }
-
-  #search {
-    grid-area: 1 / 5 / 2 / 14;
-    background-color: rgba(95,213,146, 0.5);
   }
 
   #tabs {
