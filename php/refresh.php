@@ -51,6 +51,7 @@ function getLibrary($directory) {
                     "name" => $title ?? $n,
                     "path" => "/mp3/$artist/$album/$song",
                     "artist" => $a,
+                    "dirArtist" => str_replace('_', '/', $artist),
                     "album" => str_replace('_', '/', $album),
                     "track" => $t,
                     "length" => $l

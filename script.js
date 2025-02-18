@@ -1,4 +1,4 @@
-var nowPlaying = { blank: true };
+var nowPlaying = { blank: true }, rightClickedObj = {};
 var queue = [];
 
 
@@ -216,6 +216,8 @@ function contextmenu(e, id) {
 
     menu.style.left = `${posX}px`;
     menu.style.top = `${posY}px`;
+
+    rightClickedObj = JSON.parse(e.target.closest('tr').getAttribute("data-song"));
 }
 
 
@@ -250,6 +252,7 @@ function addToQueue(songs) {
         row.classList.add('selectable');
         row.classList.add("custom-context");
         row.setAttribute("data-menu", "queueSongMenu");
+        row.setAttribute("data-song", JSON.stringify(song));
 
         row.addEventListener("mousedown", (event) => {
             document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 

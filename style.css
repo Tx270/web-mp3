@@ -470,6 +470,11 @@ main {
           background: var(--highlight-heavier);
         }
       }
+
+      span {
+        display: block;
+        height: 10px;
+      }
     }
   }
 }
