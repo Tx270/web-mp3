@@ -79,6 +79,7 @@ async function loadLibrary() {
             const artistSummary = document.createElement('summary');
             artistSummary.classList.add('selectable');
             artistSummary.textContent = artist;
+            artistSummary.title = artist;
             artistSummary.ondblclick = function(){ addToQueue(Object.entries(albums).flat(Infinity)) };
 
             artistDetails.appendChild(artistSummary);
@@ -90,6 +91,7 @@ async function loadLibrary() {
                 const albumSummary = document.createElement('summary');
                 albumSummary.classList.add('selectable');
                 albumSummary.textContent = album;
+                albumSummary.title = album;
                 albumSummary.ondblclick = function(){ addToQueue(songs) };
 
                 albumDetails.appendChild(albumSummary);
@@ -98,6 +100,7 @@ async function loadLibrary() {
                     const songSpan = document.createElement('span');
                     songSpan.classList.add('song', 'selectable');
                     songSpan.textContent = song.name;
+                    songSpan.title = song.name;
 
                     songSpan.ondblclick = function(){ addToQueue([song]) };
 
@@ -222,12 +225,21 @@ function addToQueue(songs) {
     songs = songs.filter(e => e.track);
 
     songs.forEach(song => {
+        var c;
         var row = document.getElementById("queue-tbody").insertRow(-1);
+
         row.insertCell(0).innerHTML = "<img></img>" + song.track;
-        row.insertCell(1).innerHTML = song.name;
-        row.insertCell(2).innerHTML = song.artist;
-        row.insertCell(3).innerHTML = song.album;
+        c = row.insertCell(1);
+        c.innerHTML = song.name;
+        c.title = song.name;
+        c = row.insertCell(2);
+        c.innerHTML = song.artist;
+        c.title = song.artist;
+        c = row.insertCell(3);
+        c.innerHTML = song.album;
+        c.title = song.album;
         row.insertCell(4).innerHTML = formatTime(song.length);
+
         song.element = row;
         song.queueId = queue.length;
 

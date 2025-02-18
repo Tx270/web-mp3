@@ -131,8 +131,8 @@ main {
 
           img {
             position: absolute;
-            padding: 0.2rem 0;
-            height: 0.7rem;
+            padding: 0.58rem 0;
+            height: 0.9rem;
             left: 12px;
             pointer-events: none;
             filter: invert(100);
