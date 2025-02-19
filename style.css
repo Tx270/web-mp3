@@ -318,6 +318,12 @@ main {
         filter: brightness(0) saturate(100%) invert(88%) sepia(3%) saturate(20%) hue-rotate(336deg) brightness(92%) contrast(87%);
       }
 
+      #clear {
+        height: 110%;
+        margin-left: 8px;
+        filter: brightness(0) saturate(100%) invert(88%) sepia(3%) saturate(20%) hue-rotate(336deg) brightness(92%) contrast(87%);
+      }
+
       #play {
         height: 120%;
       }

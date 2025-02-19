@@ -442,6 +442,12 @@ function shuffleQueue() {
     });
 }
 
+function clearQueue() {
+    queue = [];
+    document.getElementById("queue-tbody").innerHTML = '';
+    audioStop();
+}
+
 
 
 function audioStop() {
