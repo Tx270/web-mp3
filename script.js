@@ -387,7 +387,7 @@ function newSong(song) {
 
     nowPlaying = song;
 
-    nowPlaying.audio = new Audio(decodeURI(nowPlaying.path));
+    nowPlaying.audio = new Audio(nowPlaying.path.split('/').map(encodeURIComponent).join('/'));
 
     fetchAlbumCover(nowPlaying.path);
 
@@ -427,6 +427,19 @@ function previousSong() {
     } else {
         newSong(queue[nowPlaying.queueId - 1]);
     }
+}
+
+function shuffleQueue() {
+    queue.sort(() => Math.random() - 0.5);
+
+    const tbody = document.getElementById("queue-tbody");
+    tbody.innerHTML = '';
+
+    queue.forEach((song, index) => {
+        song.queueId = index;
+        song.element.setAttribute("data-song", JSON.stringify(song));
+        tbody.appendChild(song.element);
+    });
 }
 
 
