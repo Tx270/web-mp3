@@ -189,6 +189,15 @@ function formatTime(seconds) {
     return `${minutes}:${secs.toString().padStart(2, "0")}`;
 }
 
+
+function showLoader() {
+    document.getElementById("loader").style.display = "flex";
+}
+
+function hideLoader() {
+    document.getElementById("loader").style.display = "none";
+}
+
 function contextmenu(e, id) {
     e.preventDefault();
     
@@ -220,6 +229,85 @@ function contextmenu(e, id) {
     rightClickedObj = JSON.parse(e.target.closest('tr').getAttribute("data-song"));
 }
 
+async function getArtistDetails() {
+    showLoader()
+
+    async function fetchArtistDetails(baseUrls) {
+        var result = [];
+
+        for (const url of baseUrls) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) continue;
+
+                const data = await response.json();
+                if (data.extract) {
+                    const bio = data.extract;
+                    const image = data.originalimage ? data.originalimage.source : null;
+                    result.push({bio: bio, img: image});
+                }
+            } catch (error) {}
+        }
+
+        if (result.length === 0) return null;
+
+        return result.reduce((max, artist) => artist.bio.length > max.bio.length ? artist : max, result[0]);
+    }
+
+    async function fetchImage(url) {
+        if (!url) return null;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) return null;
+
+            const blob = await response.blob();
+            return URL.createObjectURL(blob);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    var artistDetails = await fetchArtistDetails([
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.artist)}_(band)`,
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.dirArtist)}_(band)`,
+        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.artist)}_(zespół_muzyczny)`,
+        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.dirArtist)}_(zespół_muzyczny)`
+    ]);
+
+    if (!artistDetails) {
+        artistDetails = await fetchArtistDetails([
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.artist)}`,
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.dirArtist)}`,
+            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.artist)}`,
+            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.dirArtist)}`
+        ]);
+    }
+
+    if (!artistDetails) {
+        hideLoader();
+        document.querySelector("#artistDetailsDialog").showModal();
+        document.querySelector("#artistDetailsDialog img").src = "/assets/empty.png";
+        document.querySelector("#artistDetailsDialog p").innerText = "Couldn't find info on that artist.";
+        return;
+    }
+
+    var imgElement = document.querySelector("#artistDetailsDialog img");
+    var imgSrc = await fetchImage(artistDetails.img) || "/assets/empty.png";
+
+    imgElement.onload = () => {
+        hideLoader();
+        document.querySelector("#artistDetailsDialog").showModal();
+    };
+
+    document.querySelector("#artistDetailsDialog p").innerText = artistDetails.bio || "Couldn't find info on that artist.";
+    imgElement.src = imgSrc;
+}
+
+
+function getSongLyrics() {
+
+}
 
 
 

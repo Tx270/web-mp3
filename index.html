@@ -82,9 +82,21 @@
                 <li>Go to artist</li>
                 <li>Go to album</li>
                 <span></span>
-                <li>Artist details</li>
-                <li>Song lyrics</li>
+                <li onclick="getArtistDetails()">Artist details</li>
+                <li onclick="getSongLyrics()">Song lyrics</li>
             </ul>
+        </div>
+
+        <dialog id="artistDetailsDialog">
+            <span class="close" onclick="document.getElementById('artistDetailsDialog').close();">&times;</span>
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Artist Image">
+            <p></p>
+        </dialog>
+
+        <div id="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
     </main>
 
