@@ -227,6 +227,7 @@ function contextmenu(e, id) {
     menu.style.top = `${posY}px`;
 
     rightClickedObj = JSON.parse(e.target.closest('tr').getAttribute("data-song"));
+    rightClickedObj.element = e.target.closest('tr');
 }
 
 async function getArtistDetails() {
@@ -304,9 +305,8 @@ async function getArtistDetails() {
     imgElement.src = imgSrc;
 }
 
-
 function getSongLyrics() {
-
+    // Za trudno mi znaleźć dobre api do tego :(
 }
 
 
@@ -358,6 +358,23 @@ function addToQueue(songs) {
     });
 
     if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) newSong(songs[0]);
+}
+
+function removeFromQueue() {
+    if (nowPlaying.queueId === rightClickedObj.queueId) audioStop();
+
+    const index = queue.findIndex(item => item.queueId === rightClickedObj.queueId);
+
+    if (index === -1) return;
+
+    queue.splice(index, 1);
+
+    queue.forEach((item, i) => {
+        item.queueId = i;
+        item.element.setAttribute("data-song", JSON.stringify(item));
+    });
+
+    rightClickedObj.element.remove();
 }
 
 function newSong(song) {
