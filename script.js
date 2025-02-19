@@ -1,5 +1,4 @@
-var nowPlaying = { blank: true }, rightClickedObj = {};
-var queue = [];
+var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [];
 
 
 
@@ -80,6 +79,9 @@ async function loadLibrary() {
             artistSummary.classList.add('selectable');
             artistSummary.textContent = artist;
             artistSummary.title = artist;
+            artistSummary.setAttribute("data-menu", "libraryArtistMenu");
+            artistSummary.classList.add("custom-context");
+            artistSummary.addEventListener("contextmenu", (e) => { contextmenu(e, artistSummary.getAttribute("data-menu")); });
             artistSummary.ondblclick = function(){ addToQueue(Object.entries(albums).flat(Infinity)) };
 
             artistDetails.appendChild(artistSummary);
@@ -92,6 +94,9 @@ async function loadLibrary() {
                 albumSummary.classList.add('selectable');
                 albumSummary.textContent = album;
                 albumSummary.title = album;
+                albumSummary.setAttribute("data-menu", "libraryAlbumMenu");
+                albumSummary.classList.add("custom-context");
+                albumSummary.addEventListener("contextmenu", (e) => { contextmenu(e, albumSummary.getAttribute("data-menu")); });
                 albumSummary.ondblclick = function(){ addToQueue(songs) };
 
                 albumDetails.appendChild(albumSummary);
@@ -101,6 +106,9 @@ async function loadLibrary() {
                     songSpan.classList.add('song', 'selectable');
                     songSpan.textContent = song.name;
                     songSpan.title = song.name;
+                    songSpan.setAttribute("data-menu", "librarySongMenu");
+                    songSpan.classList.add("custom-context");
+                    songSpan.addEventListener("contextmenu", (e) => { contextmenu(e, songSpan.getAttribute("data-menu")); });
 
                     songSpan.ondblclick = function(){ addToQueue([song]) };
 
@@ -198,8 +206,12 @@ function hideLoader() {
     document.getElementById("loader").style.display = "none";
 }
 
-function contextmenu(e, id) {
+function contextmenu(e, id, x, y) {
     e.preventDefault();
+
+    document.querySelectorAll(".context-menu").forEach(m => {
+        m.style.display = "none";
+    });
     
     let menu = document.getElementById(id);
 
@@ -211,8 +223,8 @@ function contextmenu(e, id) {
     let menuWidth = menu.offsetWidth;
     let menuHeight = menu.offsetHeight;
 
-    let posX = e.pageX;
-    let posY = e.pageY;
+    let posX = x || e.pageX;
+    let posY = y || e.pageY;
 
     if (posX + menuWidth > windowWidth) {
         posX -= menuWidth;
@@ -226,12 +238,20 @@ function contextmenu(e, id) {
     menu.style.left = `${posX}px`;
     menu.style.top = `${posY}px`;
 
-    rightClickedObj = JSON.parse(e.target.closest('tr').getAttribute("data-song"));
-    rightClickedObj.element = e.target.closest('tr');
+    try {
+        rightClickedObject = JSON.parse(e.target.closest('tr').getAttribute("data-song"));
+        rightClickedObject.element = e.target.closest('tr');
+    } catch {
+        try {
+            rightClickedObject = { artist: e.target.closest('summary').innerText, target: e.target.closest('summary') };
+        } catch {
+            rightClickedObject = { name: e.target.closest('span').innerText, target: e.target.closest('span') };
+        }
+    }
 }
 
 async function getArtistDetails() {
-    showLoader()
+    showLoader();
 
     async function fetchArtistDetails(baseUrls) {
         var result = [];
@@ -270,18 +290,18 @@ async function getArtistDetails() {
     }
 
     var artistDetails = await fetchArtistDetails([
-        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.artist)}_(band)`,
-        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.dirArtist)}_(band)`,
-        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.artist)}_(zespół_muzyczny)`,
-        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.dirArtist)}_(zespół_muzyczny)`
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.artist)}_(band)`,
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.dirArtist)}_(band)`,
+        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.artist)}_(zespół_muzyczny)`,
+        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.dirArtist)}_(zespół_muzyczny)`
     ]);
 
     if (!artistDetails) {
         artistDetails = await fetchArtistDetails([
-            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.artist)}`,
-            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.dirArtist)}`,
-            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.artist)}`,
-            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObj.dirArtist)}`
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.artist)}`,
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.dirArtist)}`,
+            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.artist)}`,
+            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.dirArtist)}`
         ]);
     }
 
@@ -307,6 +327,11 @@ async function getArtistDetails() {
 
 function getSongLyrics() {
     // Za trudno mi znaleźć dobre api do tego :(
+}
+
+function dbClickThis(element) {
+    const event = new MouseEvent("dblclick", { bubbles: true });
+    element.dispatchEvent(event);
 }
 
 
@@ -353,7 +378,7 @@ function addToQueue(songs) {
         let btn = document.createElement("span");
         btn.innerText = "⋮";
         btn.classList.add("contextbtn");
-        btn.addEventListener("click", (e) => { contextmenu(e, "queueSongMenu"); });
+        btn.addEventListener("click", (e) => { contextmenu(e, "queueSongMenu", btn.getBoundingClientRect().left, btn.getBoundingClientRect().top); });
         row.appendChild(btn);
     });
 
@@ -361,9 +386,9 @@ function addToQueue(songs) {
 }
 
 function removeFromQueue() {
-    if (nowPlaying.queueId === rightClickedObj.queueId) audioStop();
+    if (nowPlaying.queueId === rightClickedObject.queueId) audioStop();
 
-    const index = queue.findIndex(item => item.queueId === rightClickedObj.queueId);
+    const index = queue.findIndex(item => item.queueId === rightClickedObject.queueId);
 
     if (index === -1) return;
 
@@ -374,7 +399,7 @@ function removeFromQueue() {
         item.element.setAttribute("data-song", JSON.stringify(item));
     });
 
-    rightClickedObj.element.remove();
+    rightClickedObject.element.remove();
 }
 
 function newSong(song) {

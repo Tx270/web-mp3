@@ -39,6 +39,10 @@
 
 body {
   overflow: hidden;
+
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 
@@ -65,10 +69,6 @@ main {
 
     overflow: auto;
     clip-path: inset(0 0 0 0 round 15px);
-
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 
   #queue {

@@ -78,14 +78,34 @@
 
         <div id="queueSongMenu" class="context-menu">
             <ul>
-                <li onclick="console.log(rightClickedObj)">Add to playlist</li>
-                <li onclick="console.log(rightClickedObj)">Add to favorites</li>
+                <li onclick="console.log(rightClickedObject)">Add to playlist</li>
+                <li onclick="console.log(rightClickedObject)">Add to favorites</li>
                 <li onclick="removeFromQueue()">Remove from queue</li>
                 <span></span>
                 <li>Go to artist</li>
                 <li>Go to album</li>
                 <span></span>
                 <li onclick="getArtistDetails()">Artist details</li>
+                <li onclick="getSongLyrics()">Song lyrics</li>
+            </ul>
+        </div>
+
+        <div id="libraryArtistMenu" class="context-menu">
+            <ul>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
+                <li onclick="getArtistDetails()">Artist details</li>
+            </ul>
+        </div>
+
+        <div id="libraryAlbumMenu" class="context-menu">
+            <ul>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
+            </ul>
+        </div>
+
+        <div id="librarySongMenu" class="context-menu">
+            <ul>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
                 <li onclick="getSongLyrics()">Song lyrics</li>
             </ul>
         </div>
