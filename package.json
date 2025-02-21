@@ -1,0 +1,26 @@
+{
+  "name": "web-mp3-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tx270/web-mp3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tx270/web-mp3/issues"
+  },
+  "homepage": "https://github.com/Tx270/web-mp3#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "music-metadata": "^7.14.0",
+    "node-id3": "^0.2.7"
+  }
+}

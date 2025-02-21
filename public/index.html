@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mp3 Player</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="assets/empty.png" type="image/x-icon"> 
+</head>
+<body onload="loadLibrary()">
+    <main>
+        <section id="sidebar">
+            <div id="Library" class="tab-content"></div>
+            <div id="Playlists" class="tab-content" style="display:none">
+                <h3>Playlists</h3>
+                <p>Your playlists.</p>
+            </div>
+            <div id="Search" class="tab-content" style="display:none">
+                <h3>Search</h3>
+                <p>Search your favorite songs.</p>
+            </div>
+            <div id="Favorites" class="tab-content" style="display:none">
+                <h3>Favorites</h3>
+                <p>Your favorite songs.</p>
+            </div>
+        </section>
+        <section id="queue">
+            <table id="queue-table">
+                <thead>
+                    <tr>
+                        <th>Track</th>
+                        <th>Title</th>
+                        <th>Artist</th>
+                        <th>Album</th>
+                        <th>Length</th>
+                    </tr>
+                </thead>
+                <tbody id="queue-tbody">
+                </tbody>
+            </table>
+        </section>
+        <section id="tabs">
+            <div id="tab-buttons">
+                <button class="tab-button active" onclick="openTab(event, 'Library')">Library</button>
+                <button class="tab-button" onclick="openTab(event, 'Playlists')">Playlists</button>
+                <button class="tab-button" onclick="openTab(event, 'Search')">Search</button>
+                <button class="tab-button" onclick="openTab(event, 'Favorites')">Favorites</button>
+            </div>
+        </section>
+        <section id="song">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" id="miniCover" onclick="document.getElementById('coverDialog').showModal()" style="width: 0;">
+            <dialog id="coverDialog">
+                <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" onclick="document.getElementById('coverDialog').close()">
+            </dialog>
+            <div>
+                <span id="title"></span>
+                <span id="artist"></span>
+            </div>
+        </section>
+        <section id="controls">
+            <div id="buttons">
+                <img src="assets/icons/shuffle.svg" alt="shuffle" id="shuffle" onclick="shuffleQueue()" title="Shuffle">
+                <img src="assets/icons/back.png" alt="back" id="back" onclick="previousSong()" title="Previous">
+                <img src="assets/icons/play.png" alt="play" id="play" onclick="toggleAudio()" title="Play">
+                <img src="assets/icons/stop.png" alt="stop" id="stop" onclick="audioStop()" title="Stop">
+                <img src="assets/icons/next.png" alt="next" id="next" onclick="nextSong()" title="Next">
+                <img src="assets/icons/clear.svg" alt="clear" id="clear" onclick="clearQueue()" title="Clear">
+            </div>
+
+            <div id="seek">
+                <span id="progressTime">0:00</span>
+                <input type="range" min="0" step="0.01" value="0" oninput="updateTime()" id="progress" class="disabledRange">
+                <span id="progressTotal">0:00</span>
+            </div>
+            
+        </section>
+
+        <div id="queueSongMenu" class="context-menu">
+            <ul>
+                <li onclick="console.log(rightClickedObject)">Add to playlist</li>
+                <li onclick="console.log(rightClickedObject)">Add to favorites</li>
+                <li onclick="removeFromQueue()">Remove from queue</li>
+                <span></span>
+                <li>Go to artist</li>
+                <li>Go to album</li>
+                <span></span>
+                <li onclick="getArtistDetails()">Artist details</li>
+                <li onclick="getSongLyrics()">Song lyrics</li>
+            </ul>
+        </div>
+
+        <div id="libraryArtistMenu" class="context-menu">
+            <ul>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
+                <li onclick="getArtistDetails()">Artist details</li>
+            </ul>
+        </div>
+
+        <div id="libraryAlbumMenu" class="context-menu">
+            <ul>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
+            </ul>
+        </div>
+
+        <div id="librarySongMenu" class="context-menu">
+            <ul>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
+                <li onclick="getSongLyrics()">Song lyrics</li>
+            </ul>
+        </div>
+
+        <dialog id="artistDetailsDialog">
+            <span class="close" onclick="document.getElementById('artistDetailsDialog').close();">&times;</span>
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Artist Image">
+            <p></p>
+        </dialog>
+
+        <div id="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

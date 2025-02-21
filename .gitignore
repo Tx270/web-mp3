@@ -1,2 +1,6 @@
-mp3
-library.json
+public/mp3
+data/library.json
+
+node_modules/
+
+.env
