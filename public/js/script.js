@@ -355,17 +355,19 @@ function addToQueue(songs) {
         c.title = song.album;
         row.insertCell(4).innerHTML = formatTime(song.length);
 
-        song.element = row;
-        song.queueId = queue.length;
+        let songClone = { ...song };
 
-        queue.push(song);
+        songClone.element = row;
+        songClone.queueId = queue.length;
 
-        row.ondblclick = function(){ newSong(song); };
+        queue.push(songClone);
+
+        row.ondblclick = function(){ newSong(songClone); };
 
         row.classList.add('selectable');
         row.classList.add("custom-context");
         row.setAttribute("data-menu", "queueSongMenu");
-        row.setAttribute("data-song", JSON.stringify(song));
+        row.setAttribute("data-song", JSON.stringify(songClone));
 
         row.addEventListener("mousedown", (event) => {
             document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
@@ -382,7 +384,7 @@ function addToQueue(songs) {
         row.appendChild(btn);
     });
 
-    if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) newSong(songs[0]);
+    if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) newSong(queue[0]);
 }
 
 function removeFromQueue() {
@@ -522,9 +524,5 @@ function toggleAudio() {
 
     document.getElementById("play").classList.toggle("playing");
 
-    if (document.getElementById("play").classList.contains("playing")) {
-        audioPlay();
-    } else {
-        audioPause();
-    }
+    document.getElementById("play").classList.contains("playing") ? audioPlay() : audioPause();
 }
