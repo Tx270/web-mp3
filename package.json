@@ -1,7 +1,7 @@
 {
   "name": "web-mp3-node",
   "version": "1.0.0",
-  "description": "",
+  "description": "Mp3 player with web interface in graphic style of spotify",
   "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/Tx270/web-mp3.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Tx270",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Tx270/web-mp3/issues"
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Tx270/web-mp3#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "music-metadata": "^7.14.0",
     "node-id3": "^0.2.7"

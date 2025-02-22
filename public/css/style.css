@@ -535,6 +535,22 @@ main {
       right: 20px;
       top: 20px;
     }
+
+    &#songLyricsDialog {
+      p {
+        text-align: center;
+        padding: 10% 15%;
+        margin: 0;
+        font-size: 20px;
+        text-indent: 0px;
+        line-height: 30px;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 50px;
+        margin-bottom: -40px;
+      }
+    }
   }
 
   #loader {

@@ -245,7 +245,7 @@ function contextmenu(e, id, x, y) {
         try {
             rightClickedObject = { artist: e.target.closest('summary').innerText, target: e.target.closest('summary') };
         } catch {
-            rightClickedObject = { name: e.target.closest('span').innerText, target: e.target.closest('span') };
+            rightClickedObject = { name: e.target.closest('span').innerText, target: e.target.closest('span'), artist: e.target.closest('span').parentNode.parentNode.querySelectorAll("summary")[0].innerText };
         }
     }
 }
@@ -325,8 +325,33 @@ async function getArtistDetails() {
     imgElement.src = imgSrc;
 }
 
-function getSongLyrics() {
-    // Za trudno mi znaleźć dobre api do tego :(
+async function getSongLyrics() {
+    showLoader();
+
+    async function fetchSongLyrics(artist, song) {
+        const url = `https://api.lyrics.ovh/v1/${artist}/${song}`;
+        
+        try {
+          const response = await fetch(url);
+          
+          if (!response.ok) {
+            throw new Error('Song not found');
+          }
+          
+          const data = await response.json();
+          return data.lyrics.replace(/\r/g, "<br>").replace(/\n/g, "<br>").replace(/<br><br>/g, '<br>');
+        } catch (error) {
+          return null;
+        }
+    }
+
+    lyrics = await fetchSongLyrics(rightClickedObject.artist, rightClickedObject.name)
+    console.log(lyrics)
+
+    document.querySelector("#songLyricsDialog p").innerHTML = lyrics || "Couldn't find lyrics to that song.";
+    document.querySelector("#songLyricsDialog h1").innerText = rightClickedObject.name;
+    hideLoader();
+    document.querySelector("#songLyricsDialog").showModal();
 }
 
 function dbClickThis(element) {
