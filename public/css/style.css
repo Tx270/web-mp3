@@ -223,7 +223,7 @@ main {
   }
 
   #song {
-    grid-area: 12 / 1 / 13 / 5;
+    grid-area: 12 / 1 / 13 / 4;
     background-color: var(--background);
 
     display: flex;
@@ -231,7 +231,10 @@ main {
     align-items: center;
 
     overflow: hidden;
-    padding-left: 45px;
+    padding-left: 0;
+    padding-right: 0;
+
+    z-index: 2;
 
     #coverDialog {
       height: 70vh;
@@ -277,7 +280,7 @@ main {
   }
 
   #controls {
-    grid-area: 12 / 5 / 13 / 14;
+    grid-area: 12 / 1 / 13 / 14;
     background-color: var(--background);
 
     display: flex;
@@ -286,6 +289,8 @@ main {
     align-items: center;
 
     overflow: hidden;
+
+    padding-bottom: 10px;
 
     div {
       width: 80%;
@@ -302,10 +307,12 @@ main {
       margin-top: -8px;
 
       img {
-        height: 90%;
+        height: 70%;
         filter: invert(100);
         margin: 0 10px;
         cursor: pointer;
+
+        filter: brightness(0) saturate(100%) invert(88%) sepia(3%) saturate(20%) hue-rotate(336deg) brightness(92%) contrast(87%);
 
         &:hover {
           filter: invert(100) brightness(0.9);
@@ -314,47 +321,46 @@ main {
       }
 
       #shuffle {
-        height: 125%;
-        filter: brightness(0) saturate(100%) invert(88%) sepia(3%) saturate(20%) hue-rotate(336deg) brightness(92%) contrast(87%);
+        height: 105%;
       }
 
       #clear {
-        height: 110%;
+        height: 90%;
         margin-left: 8px;
-        filter: brightness(0) saturate(100%) invert(88%) sepia(3%) saturate(20%) hue-rotate(336deg) brightness(92%) contrast(87%);
       }
 
       #play {
-        height: 120%;
+        height: 90%;
+        filter: invert(100);
       }
       #stop {
-        height: 140%;
+        height: 110%;
+        filter: invert(100);
       }
     }
 
     #seek {
       span {
-        width: 5%;
-        font-size: 14px;
+        font-size: 12px;
       }
 
       input[type="range"] {
-        height: 30%;
+        height: 16%;
         margin: 15px;
-        width: 90%;
+        width: 40%;
         -webkit-appearance: none !important;
         appearance: none !important;
         border-radius: 10px;
 
         background: linear-gradient(to right, #fff 0%, var(--accent2) 0%);
         outline: none;
-      }
+    }
 
       input[type='range']::-webkit-slider-thumb {
         -webkit-appearance: none !important;
         background: transparent;
-        height:13px;
-        width:13px;
+        height: 12px;
+        width: 12px;
         border-radius: 20px;
         cursor: pointer;
       }
