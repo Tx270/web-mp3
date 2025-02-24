@@ -54,9 +54,8 @@ async function loadLibrary() {
         var letter = "`";
 
         const container = document.getElementById('Library');
-        container.innerHTML = '';
 
-        renderLibrary(container, letter);
+        renderLibrary(container, library, letter);
 
     } catch (error) {
         console.error('Error loading mp3 library:', error);
@@ -66,10 +65,11 @@ async function loadLibrary() {
     addListeners();
 }
 
-function renderLibrary(container, letter = '') {
+function renderLibrary(container, lib, letter = '') {
+    container.innerHTML = '';
     first = true;
 
-    Object.entries(library).forEach(([artist, albums]) => {
+    Object.entries(lib).forEach(([artist, albums]) => {
         if(letter && artist[0].toLowerCase() != letter) {
             letter = String.fromCharCode(letter.charCodeAt(0) + 1);
             var s = document.createElement('span')
@@ -161,12 +161,49 @@ function openTab(evt, tabName) {
 
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
+    if(tabName === "Search") {
+        document.getElementById("searchBox").value = "";
+        document.getElementById("searchResults").innerText = "";
+    }
 }
 
 
 
 function search(query) {
+    query = query.toLowerCase();
+    let filteredLibrary = {};
 
+    for (let artist in library) {
+        let filteredAlbums = {};
+
+        for (let album in library[artist]) {
+            let filteredSongs = library[artist][album].filter(song => 
+                song.name.toLowerCase().includes(query) ||
+                song.artist.toLowerCase().includes(query) ||
+                song.album.toLowerCase().includes(query)
+            );
+
+            if (filteredSongs.length > 0) {
+                filteredAlbums[album] = filteredSongs;
+            }
+        }
+
+        if (Object.keys(filteredAlbums).length > 0) {
+            filteredLibrary[artist] = filteredAlbums;
+        }
+    }
+
+    if(Object.keys(filteredLibrary).length !== 0)
+        renderLibrary(document.getElementById("searchResults"), filteredLibrary);
+    else 
+        document.getElementById("searchResults").innerText = "No songs matching query";
+
+    document.querySelectorAll("#searchResults .selectable").forEach(span => {
+        span.addEventListener("mousedown", (event) => {
+            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
+            event.target.classList.add("selected");
+        });
+    });
 }
 
 

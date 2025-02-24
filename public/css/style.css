@@ -362,8 +362,9 @@ main {
 
     #seek {
       span {
+        width: 25px;
         font-size: 12px;
-      }
+    }
 
       &:hover input[type='range']::-webkit-slider-thumb {
         background-color: #fff;
@@ -486,6 +487,26 @@ main {
   
     .selected {
       background-color: var(--highlight);
+    }
+
+    #Search {
+      input[type='text'] {
+        width: 90%;
+        height: 30px;
+        padding: 5px 5%;
+
+        font-size: 16px;
+
+        border: none;
+        border-radius: 15px;
+        
+        background-color: var(--highlight);
+        color: var(--text);
+      }
+
+      #searchResults {
+        margin-top: 20px;
+      }
     }
   }
 

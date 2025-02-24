@@ -17,8 +17,8 @@
                 <p>Your playlists.</p>
             </div>
             <div id="Search" class="tab-content" style="display:none">
-                <h3>Search</h3>
-                <p>Search your favorite songs.</p>
+                <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" oninput="search(this.value)">
+                <div id="searchResults"></div>
             </div>
             <div id="Favorites" class="tab-content" style="display:none">
                 <h3>Favorites</h3>
