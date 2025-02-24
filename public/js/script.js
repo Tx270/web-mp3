@@ -164,10 +164,8 @@ function openTab(evt, tabName) {
 function startUpdatingTime() {
     if (!nowPlaying.interval) {
         nowPlaying.interval = setInterval(function () {
-            const progress = document.getElementById("progress");
-            progress.value = (nowPlaying.audio.currentTime / nowPlaying.audio.duration) * 100;
-            progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
-            document.getElementById("progressTime").textContent = formatTime(nowPlaying.audio.currentTime);
+            document.getElementById("progress").value = (nowPlaying.audio.currentTime / nowPlaying.audio.duration) * 100;
+            updateTime();
         }, 1000);
     }
 }
@@ -180,7 +178,7 @@ function stopUpdatingTime() {
 }
 
 function updateTime() {
-    var progress = document.getElementById("progress");
+    const progress = document.getElementById("progress");
 
     if(nowPlaying.blank) {
         progress.value = 0;
@@ -189,6 +187,7 @@ function updateTime() {
 
     progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
     nowPlaying.audio.currentTime = (progress.value/100) * nowPlaying.audio.duration;
+    document.getElementById("progressTime").textContent = formatTime(nowPlaying.audio.currentTime);
 }
 
 function updateVolume() {
