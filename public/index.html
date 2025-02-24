@@ -75,6 +75,10 @@
             </div>
             
         </section>
+        <section id="volume">
+            <img src="assets/icons/sound.png" alt="mute" id="mute" onclick="mute()" title="Mute">
+            <input type="range" min="0" max="100" step="1" value="100" oninput="updateVolume()" id="volumeRange">
+        </section>
 
         <div id="queueSongMenu" class="context-menu">
             <ul>

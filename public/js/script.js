@@ -1,4 +1,4 @@
-var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [];
+var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = "1";
 
 
 
@@ -189,6 +189,27 @@ function updateTime() {
 
     progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
     nowPlaying.audio.currentTime = (progress.value/100) * nowPlaying.audio.duration;
+}
+
+function updateVolume() {
+    var slider = document.getElementById("volumeRange");
+
+    volume = slider.value / 100;
+
+    slider.style.background = `linear-gradient(to right, #fff ${slider.value}%, var(--accent2) ${slider.value}%)`;
+
+    if (!nowPlaying.blank) nowPlaying.audio.volume = volume;
+
+    if(volume == 0) {
+        document.getElementById("mute").src = "assets/icons/mute.png";
+    } else {
+        document.getElementById("mute").src = "assets/icons/sound.png";
+    }
+}
+
+function mute() {
+    document.getElementById("volumeRange").value = (volume ? "0" : "1") * 100;
+    updateVolume();
 }
 
 function formatTime(seconds) {
@@ -440,6 +461,7 @@ function newSong(song) {
     nowPlaying = song;
 
     nowPlaying.audio = new Audio(nowPlaying.path.split('/').map(encodeURIComponent).join('/'));
+    nowPlaying.audio.volume = volume;
 
     fetchAlbumCover(nowPlaying.path);
 
