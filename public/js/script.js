@@ -162,12 +162,12 @@ function openTab(evt, tabName) {
 
 
 function startUpdatingTime() {
-    if (!nowPlaying.interval) {
-        nowPlaying.interval = setInterval(function () {
-            document.getElementById("progress").value = (nowPlaying.audio.currentTime / nowPlaying.audio.duration) * 100;
-            updateTime();
-        }, 1000);
-    }
+    nowPlaying.audio.addEventListener('timeupdate', function () {
+        const progress = document.getElementById("progress");
+        progress.value = (nowPlaying.audio.currentTime / nowPlaying.audio.duration) * 100;
+        progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
+        document.getElementById("progressTime").textContent = formatTime(nowPlaying.audio.currentTime);
+    });
 }
 
 function stopUpdatingTime() {
