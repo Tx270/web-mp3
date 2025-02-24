@@ -167,8 +167,6 @@ function openTab(evt, tabName) {
     }
 }
 
-
-
 function search(query) {
     query = query.toLowerCase();
     let filteredLibrary = {};
@@ -475,7 +473,9 @@ function addToQueue(songs) {
         row.appendChild(btn);
     });
 
-    if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) newSong(queue[0]);
+    if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) {
+        newSong(queue[queue.length - songs.length]); // Start playing the first newly added song
+    }
 }
 
 function removeFromQueue() {
