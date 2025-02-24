@@ -1,4 +1,4 @@
-var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = "1";
+var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = "1", library;
 
 
 
@@ -50,76 +50,13 @@ function addListeners() {
 async function loadLibrary() {
     try {
         const response = await fetch('/api/library');
-        const library = await response.json();
+        library = await response.json();
         var letter = "`";
 
         const container = document.getElementById('Library');
         container.innerHTML = '';
 
-        first = true;
-
-        Object.entries(library).forEach(([artist, albums]) => {
-            if(artist[0].toLowerCase() != letter) {
-                letter = String.fromCharCode(letter.charCodeAt(0) + 1);
-                var s = document.createElement('span')
-                s.innerText = letter.toUpperCase();
-                s.classList.add("braker");
-                if(first) {
-                    first = false;
-                    s.style.marginTop = "0";
-                }
-                container.appendChild(s);
-                container.appendChild(document.createElement('hr'));
-            }
-
-            const artistDetails = document.createElement('details');
-            artistDetails.classList.add('artist');
-
-            const artistSummary = document.createElement('summary');
-            artistSummary.classList.add('selectable');
-            artistSummary.textContent = artist;
-            artistSummary.title = artist;
-            artistSummary.setAttribute("data-menu", "libraryArtistMenu");
-            artistSummary.classList.add("custom-context");
-            artistSummary.addEventListener("contextmenu", (e) => { contextmenu(e, artistSummary.getAttribute("data-menu")); });
-            artistSummary.ondblclick = function(){ addToQueue(Object.entries(albums).flat(Infinity)) };
-
-            artistDetails.appendChild(artistSummary);
-
-            Object.entries(albums).forEach(([album, songs]) => {
-                const albumDetails = document.createElement('details');
-                albumDetails.classList.add('album');
-
-                const albumSummary = document.createElement('summary');
-                albumSummary.classList.add('selectable');
-                albumSummary.textContent = album;
-                albumSummary.title = album;
-                albumSummary.setAttribute("data-menu", "libraryAlbumMenu");
-                albumSummary.classList.add("custom-context");
-                albumSummary.addEventListener("contextmenu", (e) => { contextmenu(e, albumSummary.getAttribute("data-menu")); });
-                albumSummary.ondblclick = function(){ addToQueue(songs) };
-
-                albumDetails.appendChild(albumSummary);
-
-                songs.forEach(song => {
-                    const songSpan = document.createElement('span');
-                    songSpan.classList.add('song', 'selectable');
-                    songSpan.textContent = song.name;
-                    songSpan.title = song.name;
-                    songSpan.setAttribute("data-menu", "librarySongMenu");
-                    songSpan.classList.add("custom-context");
-                    songSpan.addEventListener("contextmenu", (e) => { contextmenu(e, songSpan.getAttribute("data-menu")); });
-
-                    songSpan.ondblclick = function(){ addToQueue([song]) };
-
-                    albumDetails.appendChild(songSpan);
-                });
-
-                artistDetails.appendChild(albumDetails);
-            });
-
-            container.appendChild(artistDetails);
-        });
+        renderLibrary(container, letter);
 
     } catch (error) {
         console.error('Error loading mp3 library:', error);
@@ -127,6 +64,73 @@ async function loadLibrary() {
     }
 
     addListeners();
+}
+
+function renderLibrary(container, letter = '') {
+    first = true;
+
+    Object.entries(library).forEach(([artist, albums]) => {
+        if(letter && artist[0].toLowerCase() != letter) {
+            letter = String.fromCharCode(letter.charCodeAt(0) + 1);
+            var s = document.createElement('span')
+            s.innerText = letter.toUpperCase();
+            s.classList.add("braker");
+            if(first) {
+                first = false;
+                s.style.marginTop = "0";
+            }
+            container.appendChild(s);
+            container.appendChild(document.createElement('hr'));
+        }
+
+        const artistDetails = document.createElement('details');
+        artistDetails.classList.add('artist');
+
+        const artistSummary = document.createElement('summary');
+        artistSummary.classList.add('selectable');
+        artistSummary.textContent = artist;
+        artistSummary.title = artist;
+        artistSummary.setAttribute("data-menu", "libraryArtistMenu");
+        artistSummary.classList.add("custom-context");
+        artistSummary.addEventListener("contextmenu", (e) => { contextmenu(e, artistSummary.getAttribute("data-menu")); });
+        artistSummary.ondblclick = function(){ addToQueue(Object.entries(albums).flat(Infinity)) };
+
+        artistDetails.appendChild(artistSummary);
+
+        Object.entries(albums).forEach(([album, songs]) => {
+            const albumDetails = document.createElement('details');
+            albumDetails.classList.add('album');
+
+            const albumSummary = document.createElement('summary');
+            albumSummary.classList.add('selectable');
+            albumSummary.textContent = album;
+            albumSummary.title = album;
+            albumSummary.setAttribute("data-menu", "libraryAlbumMenu");
+            albumSummary.classList.add("custom-context");
+            albumSummary.addEventListener("contextmenu", (e) => { contextmenu(e, albumSummary.getAttribute("data-menu")); });
+            albumSummary.ondblclick = function(){ addToQueue(songs) };
+
+            albumDetails.appendChild(albumSummary);
+
+            songs.forEach(song => {
+                const songSpan = document.createElement('span');
+                songSpan.classList.add('song', 'selectable');
+                songSpan.textContent = song.name;
+                songSpan.title = song.name;
+                songSpan.setAttribute("data-menu", "librarySongMenu");
+                songSpan.classList.add("custom-context");
+                songSpan.addEventListener("contextmenu", (e) => { contextmenu(e, songSpan.getAttribute("data-menu")); });
+
+                songSpan.ondblclick = function(){ addToQueue([song]) };
+
+                albumDetails.appendChild(songSpan);
+            });
+
+            artistDetails.appendChild(albumDetails);
+        });
+
+        container.appendChild(artistDetails);
+    });
 }
 
 async function fetchAlbumCover(mp3Path) {
@@ -157,6 +161,12 @@ function openTab(evt, tabName) {
 
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
+}
+
+
+
+function search(query) {
+
 }
 
 
@@ -349,7 +359,7 @@ async function getSongLyrics() {
     showLoader();
 
     async function fetchSongLyrics(artist, song) {
-        const url = `https://api.lyrics.ovh/v1/${artist}/${song}`;
+        const url = `https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(song)}`;
         
         try {
           const response = await fetch(url);
@@ -366,7 +376,6 @@ async function getSongLyrics() {
     }
 
     lyrics = await fetchSongLyrics(rightClickedObject.artist, rightClickedObject.name)
-    console.log(lyrics)
 
     document.querySelector("#songLyricsDialog p").innerHTML = lyrics || "Couldn't find lyrics to that song.";
     document.querySelector("#songLyricsDialog h1").innerText = rightClickedObject.name;
