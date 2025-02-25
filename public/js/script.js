@@ -234,6 +234,8 @@ function search(query) {
 
 function startUpdatingTime() {
     nowPlaying.audio.addEventListener('timeupdate', function () {
+        if(nowPlaying.blank) return;
+
         const progress = document.getElementById("progress");
         progress.value = (nowPlaying.audio.currentTime / nowPlaying.audio.duration) * 100;
         progress.style.background = `linear-gradient(to right, #fff ${progress.value}%, var(--accent2) ${progress.value}%)`;
@@ -537,22 +539,26 @@ function addToQueue(songs) {
 }
 
 function initializeDragula() {
-    const drake = dragula([document.getElementById('queue-tbody')], {
+    if (window.drake) {
+        window.drake.destroy();
+    }
+    
+    window.drake = dragula([document.getElementById('queue-tbody')], {
         mirrorContainer: document.body,
         moves: function (el, container, handle) {
-            return true;
+            return handle.nodeName !== 'SPAN' || !handle.classList.contains('contextbtn');
         }
     });
 
-    drake.on('drag', function (el) {
+    window.drake.on('drag', function (el) {
         el.classList.add('grabbing');
     });
 
-    drake.on('dragend', function (el) {
+    window.drake.on('dragend', function (el) {
         el.classList.remove('grabbing');
     });
 
-    drake.on('cloned', function (mirror, original, type) {
+    window.drake.on('cloned', function (mirror, original, type) {
         if (type === 'mirror') {
             mirror.classList.add('gu-mirror');
             mirror.style.width = original.offsetWidth + 'px';
@@ -565,25 +571,45 @@ function initializeDragula() {
         }
     });
 
-    drake.on('drop', function (el, target, source, sibling) {
+    window.drake.on('drop', function (el, target, source, sibling) {
+        const isPlaying = !nowPlaying.blank;
+        const currentPlayingPath = isPlaying ? nowPlaying.path : null;
         const rows = Array.from(target.children);
         const newQueue = [];
         
         rows.forEach((row, index) => {
-            const songData = JSON.parse(row.getAttribute('data-song'));
-            const originalSong = queue.find(item => item.queueId === songData.queueId);
-            
-            if (originalSong) {
-                originalSong.queueId = index;
-                originalSong.element = row;
-                row.setAttribute('data-song', JSON.stringify(originalSong));
-                newQueue.push(originalSong);
+            try {
+                const songData = JSON.parse(row.getAttribute('data-song'));
+                const song = {
+                    name: songData.name,
+                    artist: songData.artist,
+                    dirArtist: songData.dirArtist,
+                    album: songData.album,
+                    track: songData.track,
+                    path: songData.path,
+                    cover: songData.cover,
+                    length: songData.length,
+                    queueId: index,
+                    element: row
+                };
+                
+                if (isPlaying && song.path === currentPlayingPath) {
+                    song.audio = nowPlaying.audio;
+                    nowPlaying = song;
+                }
+                
+                row.setAttribute('data-song', JSON.stringify(song));
+                row.ondblclick = function() { newSong(song); };
+                newQueue.push(song);
+            } catch (error) {
+                console.error('Error rebuilding queue item:', error);
             }
         });
         
         queue = newQueue;
     });
 }
+
 
 
 
