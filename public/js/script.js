@@ -220,6 +220,18 @@ function search(query) {
             event.target.classList.add("selected");
         });
     });
+
+
+    if(document.querySelectorAll("#searchResults .artist").length > 3) return;
+
+    document.querySelectorAll("#searchResults .artist").forEach(artist => {
+        artist.open = true;
+        artist.querySelectorAll('.album').forEach(album => {
+            if (album.querySelectorAll('.song').length < 4) {
+                album.open = true;
+            }
+        });
+    });
 }
 
 
