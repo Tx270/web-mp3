@@ -289,6 +289,7 @@ function formatTime(seconds) {
 }
 
 
+
 function showLoader() {
     document.getElementById("loader").style.display = "flex";
 }
@@ -452,21 +453,15 @@ function dbClickThis(element) {
 
 function goToArtist(query = rightClickedObject.artist) {
     document.getElementById('SearchButton').click();
-
     document.getElementById('searchBox').value = query;
-
     search(query);
 }
 
 function goToAlbum(query = rightClickedObject.album) {
     document.getElementById('SearchButton').click();
-
     document.getElementById('searchBox').value = query;
-
     search(query);
 }
-
-
 
 function addToQueue(songs) {
     songs = songs.filter(e => e.track);
@@ -475,6 +470,7 @@ function addToQueue(songs) {
         var c, span;
         var row = document.getElementById("queue-tbody").insertRow(-1);
 
+        row.draggable = true; // Make the row draggable
 
         row.insertCell(0).innerHTML = "<img></img>" + song.track;
 
@@ -500,7 +496,6 @@ function addToQueue(songs) {
 
         row.insertCell(4).innerHTML = formatTime(song.length);
 
-
         let songClone = { ...song };
 
         songClone.element = row;
@@ -523,12 +518,10 @@ function addToQueue(songs) {
             } else {
                 e.classList.add("selected");
             }
-            
         });
 
         row.addEventListener("contextmenu", (e) => { contextmenu(e, row.getAttribute("data-menu")); });
 
-        
         let btn = document.createElement("span");
         btn.innerText = "⋮";
         btn.classList.add("contextbtn");
@@ -539,7 +532,60 @@ function addToQueue(songs) {
     if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) {
         newSong(queue[queue.length - songs.length]);
     }
+
+    initializeDragula();
 }
+
+function initializeDragula() {
+    const drake = dragula([document.getElementById('queue-tbody')], {
+        mirrorContainer: document.body,
+        moves: function (el, container, handle) {
+            return true;
+        }
+    });
+
+    drake.on('drag', function (el) {
+        el.classList.add('grabbing');
+    });
+
+    drake.on('dragend', function (el) {
+        el.classList.remove('grabbing');
+    });
+
+    drake.on('cloned', function (mirror, original, type) {
+        if (type === 'mirror') {
+            mirror.classList.add('gu-mirror');
+            mirror.style.width = original.offsetWidth + 'px';
+            mirror.style.height = original.offsetHeight + 'px';
+
+            const originalStyles = window.getComputedStyle(original);
+            for (let style of originalStyles) {
+                mirror.style[style] = originalStyles.getPropertyValue(style);
+            }
+        }
+    });
+
+    drake.on('drop', function (el, target, source, sibling) {
+        const rows = Array.from(target.children);
+        const newQueue = [];
+        
+        rows.forEach((row, index) => {
+            const songData = JSON.parse(row.getAttribute('data-song'));
+            const originalSong = queue.find(item => item.queueId === songData.queueId);
+            
+            if (originalSong) {
+                originalSong.queueId = index;
+                originalSong.element = row;
+                row.setAttribute('data-song', JSON.stringify(originalSong));
+                newQueue.push(originalSong);
+            }
+        });
+        
+        queue = newQueue;
+    });
+}
+
+
 
 function removeFromQueue() {
     if (nowPlaying.queueId === rightClickedObject.queueId) audioStop();
@@ -559,7 +605,6 @@ function removeFromQueue() {
 }
 
 function newSong(song) {
-    // song.element.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--highlight-heavy');
     try {
         nowPlaying.element.querySelector("img").src = "";   
         nowPlaying.audio.pause();

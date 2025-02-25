@@ -720,3 +720,20 @@ main {
       scale: 1.1;
   }
 }
+
+.gu-mirror {
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0.8;
+  z-index: 1000;
+  display: table !important;
+  
+  img, .contextbtn {
+    display: none;
+  }
+}
+
+.grabbing {
+  cursor: grabbing;
+}
