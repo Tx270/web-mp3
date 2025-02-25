@@ -410,10 +410,24 @@ main {
     padding: 21px;
 
     img {
-      height: 90%;
       border-radius: 5px;
+      margin: 0 5px;
       cursor: pointer;
       filter: invert(100);
+    }
+
+    #mute {
+      height: 80%;
+      margin-right: -2px;
+      margin-left: 10px;
+    }
+
+    #details {
+      height: 100%;
+    }
+
+    #lyrics {
+      height: 95%;
     }
 
     input[type='range'] {

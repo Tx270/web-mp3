@@ -6,7 +6,7 @@
     <title>Mp3 Player</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="shortcut icon" href="assets/empty.png" type="image/x-icon"> 
+    <link rel="shortcut icon" href="assets/empty.svg" type="image/x-icon"> 
 </head>
 <body onload="loadLibrary()">
     <main>
@@ -79,6 +79,8 @@
             
         </section>
         <section id="volume">
+            <img src="assets/icons/artist.png" alt="details" id="details" onclick="if(!nowPlaying.blank) getArtistDetails(nowPlaying.artist, nowPlaying.dirArtist)" title="Artist Details">
+            <img src="assets/icons/microphone.png" alt="lyrics" id="lyrics" onclick="if(!nowPlaying.blank) getSongLyrics(nowPlaying.artist, nowPlaying.name)" title="Song Lyrics">
             <img src="assets/icons/sound.png" alt="mute" id="mute" onclick="mute()" title="Mute">
             <input type="range" min="0" max="100" step="1" value="100" oninput="updateVolume()" id="volumeRange">
         </section>

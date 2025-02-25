@@ -341,7 +341,7 @@ function contextmenu(e, id, x, y) {
     }
 }
 
-async function getArtistDetails() {
+async function getArtistDetails(artist = rightClickedObject.artist, dirArtist = rightClickedObject.dirArtist) {
     showLoader();
 
     async function fetchArtistDetails(baseUrls) {
@@ -381,31 +381,31 @@ async function getArtistDetails() {
     }
 
     var artistDetails = await fetchArtistDetails([
-        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.artist)}_(band)`,
-        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.dirArtist)}_(band)`,
-        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.artist)}_(zespół_muzyczny)`,
-        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.dirArtist)}_(zespół_muzyczny)`
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(artist)}_(band)`,
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(dirArtist)}_(band)`,
+        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(artist)}_(zespół_muzyczny)`,
+        `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(dirArtist)}_(zespół_muzyczny)`
     ]);
 
     if (!artistDetails) {
         artistDetails = await fetchArtistDetails([
-            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.artist)}`,
-            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.dirArtist)}`,
-            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.artist)}`,
-            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(rightClickedObject.dirArtist)}`
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(artist)}`,
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(dirArtist)}`,
+            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(artist)}`,
+            `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(dirArtist)}`
         ]);
     }
 
     if (!artistDetails) {
         hideLoader();
         document.querySelector("#artistDetailsDialog").showModal();
-        document.querySelector("#artistDetailsDialog img").src = "/assets/empty.png";
+        document.querySelector("#artistDetailsDialog img").src = "/assets/empty.svg";
         document.querySelector("#artistDetailsDialog p").innerText = "Couldn't find info on that artist.";
         return;
     }
 
     var imgElement = document.querySelector("#artistDetailsDialog img");
-    var imgSrc = await fetchImage(artistDetails.img) || "/assets/empty.png";
+    var imgSrc = await fetchImage(artistDetails.img) || "/assets/empty.svg";
 
     imgElement.onload = () => {
         hideLoader();
@@ -416,7 +416,7 @@ async function getArtistDetails() {
     imgElement.src = imgSrc;
 }
 
-async function getSongLyrics() {
+async function getSongLyrics(artist = rightClickedObject.artist, name = rightClickedObject.name) {
     showLoader();
 
     async function fetchSongLyrics(artist, song) {
@@ -436,10 +436,11 @@ async function getSongLyrics() {
         }
     }
 
-    lyrics = await fetchSongLyrics(rightClickedObject.artist, rightClickedObject.name)
+
+    lyrics = await fetchSongLyrics(artist, name);
 
     document.querySelector("#songLyricsDialog p").innerHTML = lyrics || "Couldn't find lyrics to that song.";
-    document.querySelector("#songLyricsDialog h1").innerText = rightClickedObject.name;
+    document.querySelector("#songLyricsDialog h1").innerText = name;
     hideLoader();
     document.querySelector("#songLyricsDialog").showModal();
 }
@@ -575,7 +576,7 @@ function newSong(song) {
     if(nowPlaying.cover)
         document.querySelectorAll(".cover").forEach(element => { element.src = nowPlaying.cover; });
     else
-        document.querySelectorAll(".cover").forEach(element => { element.src = "/assets/empty.png"; });
+        document.querySelectorAll(".cover").forEach(element => { element.src = "/assets/empty.svg"; });
 
     document.title = nowPlaying.name + " - " + nowPlaying.artist;
 
