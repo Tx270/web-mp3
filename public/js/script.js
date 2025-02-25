@@ -146,22 +146,6 @@ function renderLibrary(container, lib, letter = '') {
     });
 }
 
-async function fetchAlbumCover(mp3Path) {
-    document.querySelectorAll(".cover").forEach(element => { element.style.width = "auto"; });
-
-    const response = await fetch(`/api/cover?file=${encodeURIComponent(mp3Path)}`);
-    
-    if (!response.ok) {
-        document.querySelectorAll(".cover").forEach(element => { element.src = "/assets/empty.png"; });
-        return;
-    }
-
-    const blob = await response.blob();
-    const imgUrl = URL.createObjectURL(blob);
-    
-    document.querySelectorAll(".cover").forEach(element => { element.src = imgUrl; });
-}
-
 function openTab(evt, tabName) {
     
     Array.from(document.getElementsByClassName("tab-content")).forEach(content => {
@@ -538,7 +522,12 @@ function newSong(song) {
     nowPlaying.audio = new Audio(nowPlaying.path.split('/').map(encodeURIComponent).join('/'));
     nowPlaying.audio.volume = volume;
 
-    fetchAlbumCover(nowPlaying.path);
+    document.querySelectorAll(".cover").forEach(element => { element.style.width = "auto"; });
+
+    if(nowPlaying.cover)
+        document.querySelectorAll(".cover").forEach(element => { element.src = nowPlaying.cover; });
+    else
+        document.querySelectorAll(".cover").forEach(element => { element.src = "/assets/empty.png"; });
 
     document.title = nowPlaying.name + " - " + nowPlaying.artist;
 

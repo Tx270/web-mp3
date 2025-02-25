@@ -1,28 +1,11 @@
 require('dotenv').config();
 const express = require("express");
-const getCover = require("./utils/cover");
 const getLibrary = require("./utils/scan");
 const path = require("path");
 const fs = require('fs');
 
 const app = express();
 
-
-app.get("/api/cover", async (req, res) => {
-    if (!req.query.file) {
-        return res.status(400).json({ error: "Brak ścieżki do pliku MP3." });
-    }
-
-    const filePath = path.join(__dirname, '..', 'public', req.query.file);
-
-    try {
-        const cover = await getCover(filePath);
-        res.setHeader("Content-Type", cover.mime);
-        res.send(cover.data);
-    } catch (error) {
-        res.status(404).json({ error: error.message });
-    }
-});
 
 app.get('/api/scan', async (req, res) => {
     try {

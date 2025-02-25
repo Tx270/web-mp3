@@ -2,20 +2,54 @@ const fs = require('fs');
 const path = require('path');
 const NodeID3 = require('node-id3');
 const mm = require('music-metadata');
-
-
+const crypto = require('crypto');
 
 async function getMp3Duration(filePath) {
     try {
         const metadata = await mm.parseFile(filePath);
         return metadata.format.duration || 0;
     } catch (error) {
-        console.error(`Error while reading mp3 lenght: ${filePath}`, error);
+        console.error(`Error while reading mp3 length: ${filePath}`, error);
         return 0;
     }
 }
 
+function getCover(filePath) {
+    return new Promise((resolve, reject) => {
+        if (!fs.existsSync(filePath)) {
+            return reject(new Error("File doesn't exist."));
+        }
+
+        const tags = NodeID3.read(filePath);
+        if (tags.image && tags.image.imageBuffer) {
+            resolve({
+                mime: tags.image.mime,
+                data: tags.image.imageBuffer,
+            });
+        } else {
+            reject(new Error("No cover found."));
+        }
+    });
+}
+
+function clearCoversDirectory(directory) {
+    if (fs.existsSync(directory)) {
+        fs.readdirSync(directory).forEach((file) => {
+            const filePath = path.join(directory, file);
+            if (fs.lstatSync(filePath).isDirectory()) {
+                clearCoversDirectory(filePath);
+            } else {
+                fs.unlinkSync(filePath);
+            }
+        });
+    }
+}
+
 async function getLibrary(directory) {
+    const coversDir = path.join(__dirname, '../../public/assets/covers');
+    clearCoversDirectory(coversDir);
+    fs.mkdirSync(coversDir, { recursive: true });
+
     let library = {};
     let d = fs.readdirSync(directory);
     let totalArtists = d.length;
@@ -39,6 +73,16 @@ async function getLibrary(directory) {
             let songs = fs.readdirSync(albumPath).filter(file => path.extname(file) === '.mp3');
             songs.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
+            let coverPath = '';
+            try {
+                const cover = await getCover(path.join(albumPath, songs[0]));
+                const coverName = crypto.randomBytes(16).toString('hex') + path.extname(cover.mime);
+                coverPath = path.join("assets", "covers", coverName);
+                fs.writeFileSync(path.join(coversDir, coverName), cover.data);
+            } catch (error) {
+                console.error(`Error while saving cover for album ${albumPath}:`, error);
+            }
+
             for (const song of songs) {
                 const songPath = path.join(albumPath, song);
                 const tags = NodeID3.read(songPath);
@@ -60,7 +104,8 @@ async function getLibrary(directory) {
                     dirArtist: artist.replace(/_/g, '/'),
                     album: album.replace(/_/g, '/'),
                     track: track,
-                    length: length
+                    length: length,
+                    cover: coverPath
                 });
             }
         }
@@ -68,6 +113,5 @@ async function getLibrary(directory) {
 
     return library;
 }
-
 
 module.exports = getLibrary;
