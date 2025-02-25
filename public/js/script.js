@@ -166,6 +166,10 @@ function openTab(evt, tabName) {
     if(tabName === "Search") {
         document.getElementById("searchBox").value = "";
         document.getElementById("searchResults").innerText = "";
+    } else if(tabName === "Library") {
+        document.querySelectorAll("#Library .artist").forEach(artist => {
+            artist.open = false;
+        });
     }
 }
 
@@ -185,6 +189,7 @@ function search(query) {
             let filteredSongs = library[artist][album].filter(song => 
                 song.name.toLowerCase().includes(query) ||
                 song.artist.toLowerCase().includes(query) ||
+                song.dirArtist.toLowerCase().includes(query) ||
                 song.album.toLowerCase().includes(query)
             );
 
@@ -442,6 +447,22 @@ function dbClickThis(element) {
     element.dispatchEvent(event);
 }
 
+function goToArtist(query = rightClickedObject.artist) {
+    document.getElementById('SearchButton').click();
+
+    document.getElementById('searchBox').value = query;
+
+    search(query);
+}
+
+function goToAlbum(query = rightClickedObject.album) {
+    document.getElementById('SearchButton').click();
+
+    document.getElementById('searchBox').value = query;
+
+    search(query);
+}
+
 
 
 function addToQueue(songs) {
@@ -458,9 +479,13 @@ function addToQueue(songs) {
         c = row.insertCell(2);
         c.innerHTML = song.artist;
         c.title = song.artist;
+        c.classList.add("link");
+        c.addEventListener("click", () => goToArtist(song.artist));
         c = row.insertCell(3);
         c.innerHTML = song.album;
         c.title = song.album;
+        c.classList.add("link");
+        c.addEventListener("click", () => goToAlbum(song.album));
         row.insertCell(4).innerHTML = formatTime(song.length);
 
         let songClone = { ...song };
@@ -493,7 +518,7 @@ function addToQueue(songs) {
     });
 
     if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) {
-        newSong(queue[queue.length - songs.length]); // Start playing the first newly added song
+        newSong(queue[queue.length - songs.length]);
     }
 }
 

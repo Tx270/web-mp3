@@ -47,7 +47,7 @@
             <div id="tab-buttons">
                 <button class="tab-button active" onclick="openTab(event, 'Library')">Library</button>
                 <button class="tab-button" onclick="openTab(event, 'Playlists')">Playlists</button>
-                <button class="tab-button" onclick="openTab(event, 'Search')">Search</button>
+                <button class="tab-button" onclick="openTab(event, 'Search')" id="SearchButton">Search</button>
                 <button class="tab-button" onclick="openTab(event, 'Favorites')">Favorites</button>
             </div>
         </section>
@@ -57,8 +57,8 @@
                 <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" onclick="document.getElementById('coverDialog').close()">
             </dialog>
             <div>
-                <span id="title"></span>
-                <span id="artist"></span>
+                <span id="title" onclick="goToAlbum(nowPlaying.album)"></span>
+                <span id="artist" onclick="goToArtist(nowPlaying.artist)"></span>
             </div>
         </section>
         <section id="controls">
@@ -89,8 +89,8 @@
                 <li onclick="console.log(rightClickedObject)">Add to favorites</li>
                 <li onclick="removeFromQueue()">Remove from queue</li>
                 <span></span>
-                <li>Go to artist</li>
-                <li>Go to album</li>
+                <li onclick="goToArtist()">Go to artist</li>
+                <li onclick="goToAlbum()">Go to album</li>
                 <span></span>
                 <li onclick="getArtistDetails()">Artist details</li>
                 <li onclick="getSongLyrics()">Song lyrics</li>

@@ -145,7 +145,6 @@ main {
 
           padding: 5px 5px;
           font-size: 13px;
-          cursor: pointer;
           position: relative;
 
           text-overflow: ellipsis;
@@ -158,6 +157,10 @@ main {
             pointer-events: none;
             filter: invert(100);
           }
+        }
+
+        .link:hover {
+          text-decoration: underline;
         }
 
         tr {
@@ -296,10 +299,20 @@ main {
       #title {
         font-weight: 900;
         font-size: 15px;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
 
       #artist {
         filter: brightness(0.7);
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
@@ -678,7 +691,6 @@ main {
   }
 }
 
-/* TODO: fix cover img style in search tab */
 
 @keyframes blink {
   0%, 80%, 100% {
