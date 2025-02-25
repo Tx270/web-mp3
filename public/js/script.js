@@ -110,7 +110,12 @@ function renderLibrary(container, lib, letter = '') {
             albumSummary.addEventListener("contextmenu", (e) => { contextmenu(e, albumSummary.getAttribute("data-menu")); });
             albumSummary.ondblclick = function(){ addToQueue(songs) };
 
-            albumDetails.appendChild(albumSummary);
+            const albumCover = document.createElement('img');
+            albumCover.classList.add("albumCover")
+            albumCover.src = songs[0].cover;
+
+            albumSummary.prepend(albumCover);
+            albumDetails.append(albumSummary);
 
             songs.forEach(song => {
                 const songSpan = document.createElement('span');
