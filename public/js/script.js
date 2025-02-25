@@ -168,6 +168,11 @@ function openTab(evt, tabName) {
 }
 
 function search(query) {
+    if(!query) {
+        document.getElementById("searchResults").innerHTML = '';
+        return;
+    };
+
     query = query.toLowerCase();
     let filteredLibrary = {};
 

@@ -17,7 +17,10 @@
                 <p>Your playlists.</p>
             </div>
             <div id="Search" class="tab-content" style="display:none">
-                <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" oninput="search(this.value)">
+                <div style="position: relative;">
+                    <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" oninput="search(this.value)">
+                    <span onclick="document.getElementById('searchBox').value = ''; document.getElementById('searchResults').innerText = '';" id="cancelSearch">&times;</span>
+                </div>
                 <div id="searchResults"></div>
             </div>
             <div id="Favorites" class="tab-content" style="display:none">
