@@ -129,6 +129,19 @@ function renderLibrary(container, lib, letter = '') {
             artistDetails.appendChild(albumDetails);
         });
 
+        artistDetails.addEventListener('toggle', function() {
+            if (artistDetails.open && Object.entries(albums).length === 1) {
+                artistDetails.querySelector('.album').open = true;
+            } else if (!artistDetails.open) {
+                artistDetails.querySelectorAll('.album').forEach(album => {
+                    album.style.transition = 'none';
+                    album.open = false;
+                    void album.offsetHeight;
+                    album.style.transition = '';                
+                });
+            }
+        });
+
         container.appendChild(artistDetails);
     });
 }
