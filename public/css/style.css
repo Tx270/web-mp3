@@ -159,8 +159,11 @@ main {
           }
         }
 
-        .link:hover {
-          text-decoration: underline;
+        .link {
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
 
         tr {
@@ -522,6 +525,7 @@ main {
       }
   
       hr {
+        width: 102%;
         border: 1px solid #b3b3b37a;
       }
     }

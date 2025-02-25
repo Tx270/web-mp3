@@ -5,10 +5,12 @@ var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = 
 
 function addListeners() {
     document.querySelectorAll(".selectable").forEach(span => {
-        span.addEventListener("mousedown", (event) => {
-            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
-            event.target.classList.add("selected");
-        });
+        if (!span.classList.contains("link")) {
+            span.addEventListener("mousedown", (event) => {
+                document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
+                event.target.classList.add("selected");
+            });
+        }
     });
 
     document.addEventListener("click", (event) => {
@@ -469,24 +471,34 @@ function addToQueue(songs) {
     songs = songs.filter(e => e.track);
 
     songs.forEach(song => {
-        var c;
+        var c, span;
         var row = document.getElementById("queue-tbody").insertRow(-1);
 
+
         row.insertCell(0).innerHTML = "<img></img>" + song.track;
+
         c = row.insertCell(1);
         c.innerHTML = song.name;
         c.title = song.name;
+
         c = row.insertCell(2);
-        c.innerHTML = song.artist;
-        c.title = song.artist;
-        c.classList.add("link");
-        c.addEventListener("click", () => goToArtist(song.artist));
+        span = document.createElement("span");
+        span.innerHTML = song.artist;
+        span.addEventListener("click", () => goToArtist(song.artist));
+        span.classList.add("link");
+        span.title = song.artist;
+        c.append(span);
+
         c = row.insertCell(3);
-        c.innerHTML = song.album;
-        c.title = song.album;
-        c.classList.add("link");
-        c.addEventListener("click", () => goToAlbum(song.album));
+        span = document.createElement("span");
+        span.innerHTML = song.album;
+        span.addEventListener("click", () => goToArtist(song.album));
+        span.classList.add("link");
+        span.title = song.album;
+        c.append(span);
+
         row.insertCell(4).innerHTML = formatTime(song.length);
+
 
         let songClone = { ...song };
 
@@ -503,8 +515,14 @@ function addToQueue(songs) {
         row.setAttribute("data-song", JSON.stringify(songClone));
 
         row.addEventListener("mousedown", (event) => {
-            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
-            event.target.parentElement.classList.add("selected");
+            document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected"));
+            const e = event.target.parentElement;
+            if(e.nodeName === "TD") {
+                e.parentElement.classList.add("selected");
+            } else {
+                e.classList.add("selected");
+            }
+            
         });
 
         row.addEventListener("contextmenu", (e) => { contextmenu(e, row.getAttribute("data-menu")); });
