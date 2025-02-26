@@ -243,13 +243,6 @@ function startUpdatingTime() {
     });
 }
 
-function stopUpdatingTime() {
-    if (nowPlaying.interval) {
-        clearInterval(nowPlaying.interval);
-        nowPlaying.interval = null;
-    }
-}
-
 function updateTime() {
     const progress = document.getElementById("progress");
 
@@ -634,7 +627,6 @@ function newSong(song) {
     try {
         nowPlaying.element.querySelector("img").src = "";   
         nowPlaying.audio.pause();
-        stopUpdatingTime();
     } catch {}
 
     nowPlaying = song;
@@ -657,6 +649,7 @@ function newSong(song) {
     document.getElementById("play").classList.add("playing");
     document.getElementById("progressTotal").innerText = formatTime(nowPlaying.length);
     document.getElementById("progress").classList.remove('disabledRange');
+    startUpdatingTime();
 
     nowPlaying.audio.addEventListener("ended", nextSong);
 
@@ -733,8 +726,6 @@ function audioPlay() {
     
     nowPlaying.audio.play();
 
-    startUpdatingTime();
-
     nowPlaying.element.querySelector("img").src = "/assets/icons/play.png";
     document.getElementById("play").src = "/assets/icons/pause.png";
 }
@@ -743,8 +734,6 @@ function audioPause() {
     if(nowPlaying.blank) return;
 
     nowPlaying.audio.pause();
-
-    stopUpdatingTime();
 
     nowPlaying.element.querySelector("img").src = "/assets/icons/pause.png";
     document.getElementById("play").src = "/assets/icons/play.png";
