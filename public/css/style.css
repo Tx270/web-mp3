@@ -449,6 +449,7 @@ main {
     border-radius: 0 0 15px 15px;
 
     clip-path: inset(0 0 0 0 round 0 0 15px 15px) !important;
+    overflow-x: hidden;
 
     .selected {
       background-color: var(--highlight);
@@ -492,7 +493,7 @@ main {
       }
     }
 
-    .album {
+    .album, .playlist {
       margin: 0px 30px;
       padding: 0;
       display: flex;
@@ -507,7 +508,7 @@ main {
         top: 0.82rem;
       }
 
-      .albumCover {
+      .albumCover, .playlistCover {
         height: 35px;
         position: absolute;
         left: 32px;
@@ -546,7 +547,6 @@ main {
 
     #Search {
       div {
-
         input[type='text'] {
           width: 90%;
           height: 30px;
@@ -572,6 +572,60 @@ main {
 
       #searchResults {
         margin-top: 20px;
+      }
+    }
+
+    #Playlists {
+      .playlist {
+        margin: 0;
+  
+        .song {
+          width: 85%;
+        }
+  
+        .playlistCover {
+          height: 80px;
+          top: 7px;
+          left: 40px;
+        }
+  
+        summary {
+          padding: 7.5px 0 7px 75px;
+          font-size: 26px;
+          height: 80px;
+          line-height: 80px;
+          text-indent: 60px;
+        }
+  
+        summary::before {
+          top: 2.45rem;
+        }
+  
+        .artistSpan {
+          color: var(--accent-hover);
+          width: 200px;
+          display: block;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 14px;
+          text-indent: 5px;
+          pointer-events: none;
+        }
+      }
+
+      #addPlaylist {
+        height: 70px;
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          width: 22px;
+          filter: invert(1);
+          cursor: pointer;
+        }
       }
     }
   }

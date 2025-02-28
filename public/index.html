@@ -9,13 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css">
     <link rel="shortcut icon" href="assets/empty.svg" type="image/x-icon"> 
 </head>
-<body onload="loadLibrary()">
+<body onload="init()">
     <main>
         <section id="sidebar">
-            <div id="Library" class="tab-content"></div>
+            <div id="Library" class="tab-content">
+            </div>
             <div id="Playlists" class="tab-content" style="display:none">
-                <h3>Playlists</h3>
-                <p>Your playlists.</p>
             </div>
             <div id="Search" class="tab-content" style="display:none">
                 <div style="position: relative;">
@@ -88,7 +87,7 @@
 
         <div id="queueSongMenu" class="context-menu">
             <ul>
-                <li onclick="console.log(rightClickedObject)">Add to playlist</li>
+                <li onclick="addToPlaylist()">Add to playlist</li>
                 <li onclick="console.log(rightClickedObject)">Add to favorites</li>
                 <li onclick="removeFromQueue()">Remove from queue</li>
                 <span></span>
@@ -102,21 +101,44 @@
 
         <div id="libraryArtistMenu" class="context-menu">
             <ul>
-                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
                 <li onclick="getArtistDetails()">Artist details</li>
             </ul>
         </div>
 
         <div id="libraryAlbumMenu" class="context-menu">
             <ul>
-                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
             </ul>
         </div>
 
         <div id="librarySongMenu" class="context-menu">
             <ul>
-                <li onclick="dbClickThis(rightClickedObject.target)">Add to Queue</li>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
                 <li onclick="getSongLyrics()">Song lyrics</li>
+            </ul>
+        </div>
+
+        <div id="playlistMenu" class="context-menu">
+            <ul>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
+                <span></span>
+                <li onclick="editPlaylist()">Edit playlist</li>
+                <li onclick="removePlaylist()">Remove playlist</li>
+                <li onclick="newPlaylist()">New playlist</li>
+            </ul>
+        </div>
+
+        <div id="playlistSongMenu" class="context-menu">
+            <ul>
+                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
+                <li onclick="removeFromPlaylist()">Remove from playlist</li>
+                <span></span>
+                <li onclick="goToArtist(rightClickedObject.target.dataset.artist)">Go to artist</li>
+                <li onclick="goToAlbum(rightClickedObject.target.dataset.album)">Go to album</li>
+                <span></span>
+                <li onclick="getArtistDetails(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.dirArtist)">Artist details</li>
+                <li onclick="getSongLyrics(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.name)">Song lyrics</li>
             </ul>
         </div>
 

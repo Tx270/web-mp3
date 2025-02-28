@@ -1,4 +1,16 @@
 var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = "1", library;
+const playlists = [
+    {
+        "name": "Name",
+        "cover": "assets/covers/2e4c2d2f343d41b32f5205c1197789a4",
+        "songs": []
+    },
+    {
+        "name": "Name",
+        "cover": "assets/covers/9cdfd75c318f4b517be6d5ed0d7b4f23",
+        "songs": []
+    }
+];
 
 
 
@@ -7,8 +19,10 @@ function addListeners() {
     document.querySelectorAll(".selectable").forEach(span => {
         if (!span.classList.contains("link")) {
             span.addEventListener("mousedown", (event) => {
-                document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
-                event.target.classList.add("selected");
+                if (event.target.closest(".selectable") === span) {
+                    document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected")); 
+                    span.classList.add("selected");
+                }
             });
         }
     });
@@ -63,8 +77,6 @@ async function loadLibrary() {
         console.error('Error loading mp3 library:', error);
         document.getElementById('sidebar').innerHTML = 'Error loading mp3 library: <br>' + error;
     }
-
-    addListeners();
 }
 
 function renderLibrary(container, lib, letter = '') {
@@ -92,7 +104,7 @@ function renderLibrary(container, lib, letter = '') {
         artistSummary.classList.add('selectable');
         artistSummary.textContent = artist;
         artistSummary.title = artist;
-        artistSummary.setAttribute("data-menu", "libraryArtistMenu");
+        artistSummary.dataset.menu = "libraryArtistMenu";
         artistSummary.classList.add("custom-context");
         artistSummary.addEventListener("contextmenu", (e) => { contextmenu(e, artistSummary.getAttribute("data-menu")); });
         artistSummary.ondblclick = function(){ addToQueue(Object.entries(albums).flat(Infinity)) };
@@ -107,7 +119,7 @@ function renderLibrary(container, lib, letter = '') {
             albumSummary.classList.add('selectable');
             albumSummary.textContent = album;
             albumSummary.title = album;
-            albumSummary.setAttribute("data-menu", "libraryAlbumMenu");
+            albumSummary.dataset.menu = "libraryAlbumMenu";
             albumSummary.classList.add("custom-context");
             albumSummary.addEventListener("contextmenu", (e) => { contextmenu(e, albumSummary.getAttribute("data-menu")); });
             albumSummary.ondblclick = function(){ addToQueue(songs) };
@@ -124,7 +136,7 @@ function renderLibrary(container, lib, letter = '') {
                 songSpan.classList.add('song', 'selectable');
                 songSpan.textContent = song.name;
                 songSpan.title = song.name;
-                songSpan.setAttribute("data-menu", "librarySongMenu");
+                songSpan.dataset.menu = "librarySongMenu";
                 songSpan.classList.add("custom-context");
                 songSpan.addEventListener("contextmenu", (e) => { contextmenu(e, songSpan.getAttribute("data-menu")); });
 
@@ -153,6 +165,69 @@ function renderLibrary(container, lib, letter = '') {
     });
 }
 
+async function renderPlaylists() {
+    const container = document.getElementById('Playlists');
+    container.innerHTML = '';
+
+    playlists.forEach(playlist => {
+        const playlistDetails = document.createElement('details');
+        playlistDetails.classList.add('playlist');
+
+        const playlistSummary = document.createElement('summary');
+        playlistSummary.classList.add('selectable');
+        playlistSummary.textContent = playlist.name;
+        playlistSummary.title = playlist.name;
+        playlistSummary.dataset.menu = "playlistMenu";
+        playlistSummary.classList.add("custom-context");
+        playlistSummary.classList.add("playlist");
+        playlistSummary.addEventListener("contextmenu", (e) => { contextmenu(e, playlistSummary.getAttribute("data-menu")); });
+        playlistSummary.ondblclick = function(){ addToQueue(playlist.songs) };
+
+        const playlistCover = document.createElement('img');
+        playlistCover.classList.add("playlistCover");
+        playlistCover.src = playlist.cover;
+
+        playlistSummary.prepend(playlistCover);
+        playlistDetails.append(playlistSummary);
+
+        playlist.songs.forEach(song => {
+            const songSpan = document.createElement('span');
+            songSpan.classList.add('song', 'selectable');
+            songSpan.textContent = song.name;
+            songSpan.title = song.name;
+            songSpan.dataset.menu = "playlistSongMenu";
+            songSpan.classList.add("custom-context");
+            songSpan.dataset.album = song.album;
+            songSpan.dataset.artist = song.artist;
+            songSpan.dataset.dirArtist = song.dirArtist
+            songSpan.dataset.name = song.name;
+            songSpan.addEventListener("contextmenu", (e) => { contextmenu(e, songSpan.getAttribute("data-menu")); });
+            songSpan.ondblclick = function(){ addToQueue([song]); };
+
+            const artistSpan = document.createElement('span');
+            artistSpan.textContent = song.artist;
+            artistSpan.title = song.artist;
+            artistSpan.classList.add("artistSpan");
+
+            songSpan.append(artistSpan);
+
+            playlistDetails.append(songSpan);
+        });
+
+        container.append(playlistDetails);
+    });
+
+    const addContainer = document.createElement('div');
+    addContainer.id = "addPlaylist";
+    const addPlaylist = document.createElement('img');
+    addPlaylist.src = "assets/icons/add.png";
+    addPlaylist.title = "Add playlist";
+    addPlaylist.onclick = function(){ newPlaylist(); }
+
+    addContainer.append(addPlaylist);
+    container.append(addContainer);
+}
+
 function openTab(evt, tabName) {
     
     Array.from(document.getElementsByClassName("tab-content")).forEach(content => {
@@ -171,6 +246,10 @@ function openTab(evt, tabName) {
     } else if(tabName === "Library") {
         document.querySelectorAll("#Library .artist").forEach(artist => {
             artist.open = false;
+        });
+    } else if(tabName === "Playlists") {
+        document.querySelectorAll("#Playlists .playlist").forEach(playlist => {
+            playlist.open = false;
         });
     }
 }
@@ -465,7 +544,7 @@ function addToQueue(songs) {
         var c, span;
         var row = document.getElementById("queue-tbody").insertRow(-1);
 
-        row.draggable = true; // Make the row draggable
+        row.draggable = true;
 
         row.insertCell(0).innerHTML = "<img></img>" + song.track;
 
@@ -502,8 +581,8 @@ function addToQueue(songs) {
 
         row.classList.add('selectable');
         row.classList.add("custom-context");
-        row.setAttribute("data-menu", "queueSongMenu");
-        row.setAttribute("data-song", JSON.stringify(songClone));
+        row.dataset.menu = "queueSongMenu";
+        row.dataset.song = JSON.stringify(songClone);
 
         row.addEventListener("mousedown", (event) => {
             document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected"));
@@ -591,7 +670,7 @@ function initializeDragula() {
                     nowPlaying = song;
                 }
                 
-                row.setAttribute('data-song', JSON.stringify(song));
+                row.dataset.song = JSON.stringify(song);
                 row.ondblclick = function() { newSong(song); };
                 newQueue.push(song);
             } catch (error) {
@@ -617,7 +696,7 @@ function removeFromQueue() {
 
     queue.forEach((item, i) => {
         item.queueId = i;
-        item.element.setAttribute("data-song", JSON.stringify(item));
+        item.element.dataset.song = JSON.stringify(item);
     });
 
     rightClickedObject.element.remove();
@@ -688,7 +767,7 @@ function shuffleQueue() {
 
     queue.forEach((song, index) => {
         song.queueId = index;
-        song.element.setAttribute("data-song", JSON.stringify(song));
+        song.element.dataset.song = JSON.stringify(song);
         tbody.appendChild(song.element);
     });
 }
@@ -745,4 +824,14 @@ function toggleAudio() {
     document.getElementById("play").classList.toggle("playing");
 
     document.getElementById("play").classList.contains("playing") ? audioPlay() : audioPause();
+}
+
+
+
+
+
+async function init() {
+    await loadLibrary();
+    await renderPlaylists();
+    addListeners();
 }
