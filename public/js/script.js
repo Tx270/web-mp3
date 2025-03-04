@@ -15,6 +15,8 @@ async function loadPlaylists() {
 }
 
 async function savePlaylists() {
+    updatePlaylistMenu();
+
     try {
         await fetch("/api/playlists", {
             method: "POST",
@@ -413,7 +415,7 @@ function search(query) {
 
 async function openPath(path = JSON.parse(rightClickedObject.target.dataset.song).path) {
     path = "public".concat(path);
-    
+
     try {
         await fetch("/api/open", {
             method: "POST",
@@ -529,6 +531,27 @@ function contextmenu(e, id, x, y) {
             rightClickedObject = { name: e.target.closest('span').innerText, target: e.target.closest('span'), artist: e.target.closest('span').parentNode.parentNode.querySelectorAll("summary")[0].innerText };
         }
     }
+}
+
+function updatePlaylistMenu() {
+    document.querySelectorAll(".playlistSubmenu").forEach(submenu => {
+        submenu.innerHTML = "";
+
+        Object.keys(playlists).forEach(playlist => {
+            let item = document.createElement("li");
+            item.textContent = playlist;
+            item.onclick = () => {
+                let song;
+                try {
+                    song = JSON.parse(rightClickedObject.target.dataset.song);
+                } catch (error) {
+                    song = rightClickedObject;
+                }
+                addToPlaylist(playlist, song);
+            };
+            submenu.appendChild(item);
+        });
+    });
 }
 
 async function getArtistDetails(artist = rightClickedObject.artist, dirArtist = rightClickedObject.dirArtist) {
@@ -978,6 +1001,7 @@ async function init() {
     await loadLibrary();
     await loadPlaylists();
     await loadQueue();
+    updatePlaylistMenu();
     addListeners();
 }
  

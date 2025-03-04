@@ -82,7 +82,10 @@
 
         <div id="queueSongMenu" class="context-menu">
             <ul>
-                <li onclick="addToPlaylist(prompt('Enter playlist name:'), rightClickedObject)">Add to playlist</li>
+                <li class="submenuParent">
+                    Add to playlist
+                    <ul class="playlistSubmenu"></ul>
+                </li>
                 <li onclick="removeFromQueue()">Remove from queue</li>
                 <span></span>
                 <li onclick="goToArtist()">Go to artist</li>
@@ -109,8 +112,12 @@
 
         <div id="librarySongMenu" class="context-menu">
             <ul>
+                <li class="submenuParent">
+                    Add to playlist
+                    <ul class="playlistSubmenu" data-></ul>
+                </li>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
-                <li onclick="addToPlaylist(prompt('Enter playlist name:'), JSON.parse(rightClickedObject.target.dataset.song))">Add to playlist</li>
+                <span></span>
                 <li onclick="openPath()">Show in explorer</li>
                 <li onclick="getSongLyrics()">Song lyrics</li>
             </ul>
