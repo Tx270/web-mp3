@@ -50,7 +50,6 @@ async function removePlaylist(name) {
 }
 
 async function addToPlaylist(playlistName, song) {
-    console.log(playlistName, song);
     if (playlists[playlistName]) {
         playlists[playlistName].songs.push(song);
         await savePlaylists();
@@ -61,7 +60,6 @@ async function addToPlaylist(playlistName, song) {
 }
 
 async function removeFromPlaylist(playlistName, songName) {
-    console.log(playlistName, songName);
     if (playlists[playlistName]) {
         playlists[playlistName].songs = playlists[playlistName].songs.filter(song => song.name !== songName);
         await savePlaylists();
@@ -308,7 +306,6 @@ function renderLibrary(container, lib, letter = '') {
 
                 songSpan.ondblclick = function(){ addToQueue([song]) };
                 songSpan.dataset.song = JSON.stringify(song);
-                console.log(song);
 
                 albumDetails.appendChild(songSpan);
             });

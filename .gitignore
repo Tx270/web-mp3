@@ -1,7 +1,8 @@
 public/mp3
 public/assets/covers
 data/library.json
-public/assets/playlists
+data/playlists.json
+data/queue.json
 
 node_modules/
 
