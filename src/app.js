@@ -7,6 +7,7 @@ const fs = require('fs');
 
 const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 
 app.get('/api/scan', async (req, res) => {
@@ -21,21 +22,25 @@ app.get('/api/scan', async (req, res) => {
 });
 
 app.get("/api/library", (req, res) => {
-    return fileRead(path.join(__dirname, "..", "data", "library.json"), res);
+    return fileRead("library.json", res);
 });
 
 app.get("/api/playlists", (req, res) => {
-    return fileRead(path.join(__dirname, "..", "data", "playlists.json"), res);
+    return fileRead("playlists.json", res);
 });
 
 app.post("/api/playlists", (req, res) => {
-    return fileWrite(path.join(__dirname, "..", "data", "playlists.json"), req.body, res);
+    return fileWrite("playlists.json", req.body, res);
 });
 
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.get("/api/queue", (req, res) => {
+    return fileRead("queue.json", res);
+});
+
+app.post("/api/queue", (req, res) => {
+    return fileWrite("queue.json", req.body, res);
+});
 
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => { console.log(`Server running on http://localhost:${PORT}`); });

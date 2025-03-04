@@ -639,7 +639,7 @@ function goToAlbum(query = rightClickedObject.album) {
     search(query);
 }
 
-function addToQueue(songs) {
+function addToQueue(songs, play = true) {
     songs = songs.filter(e => e.track);
 
     songs.forEach(song => {
@@ -705,11 +705,35 @@ function addToQueue(songs) {
         row.appendChild(btn);
     });
 
-    if(nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) {
+    if((nowPlaying.blank || !document.getElementById("play").classList.contains("playing")) && play) {
         newSong(queue[queue.length - songs.length]);
     }
 
     initializeDragula();
+    saveQueue();
+}
+
+async function loadQueue() {
+    try {
+        const response = await fetch("/api/queue");
+        if (!response.ok) throw new Error("Failed to load queue");
+        const savedQueue = await response.json();
+        addToQueue(savedQueue, false);
+    } catch (error) {
+        console.error("Error loading queue:", error);
+    }
+}
+
+async function saveQueue() {
+    try {
+        await fetch("/api/queue", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(queue)
+        });
+    } catch (error) {
+        console.error("Error saving queue:", error);
+    }
 }
 
 function initializeDragula() {
@@ -781,6 +805,7 @@ function initializeDragula() {
         });
         
         queue = newQueue;
+        saveQueue();
     });
 }
 
@@ -802,6 +827,7 @@ function removeFromQueue() {
     });
 
     rightClickedObject.element.remove();
+    saveQueue();
 }
 
 function newSong(song) {
@@ -872,12 +898,15 @@ function shuffleQueue() {
         song.element.dataset.song = JSON.stringify(song);
         tbody.appendChild(song.element);
     });
+
+    saveQueue();
 }
 
 function clearQueue() {
     queue = [];
     document.getElementById("queue-tbody").innerHTML = '';
     audioStop();
+    saveQueue();
 }
 
 
@@ -935,5 +964,7 @@ function toggleAudio() {
 async function init() {
     await loadLibrary();
     await loadPlaylists();
+    await loadQueue();
     addListeners();
 }
+ 

@@ -1,6 +1,10 @@
 const fs = require('fs');
+const path = require("path");
 
-function fileRead(filePath, res) {
+
+function fileRead(file, res) {
+    const filePath = path.join(__dirname, "..", "..", "data", file);
+
     fs.readFile(filePath, "utf8", (err, data) => {
         if (err) {
             if (err.code === 'ENOENT') {
@@ -18,7 +22,9 @@ function fileRead(filePath, res) {
     });
 }
 
-function fileWrite(filePath, data, res) {
+function fileWrite(file, data, res) {
+    const filePath = path.join(__dirname, "..", "..", "data", file);
+
     if (typeof data !== "object") {
         return res.status(400).json({ error: "Invalid playlists format." });
     }
