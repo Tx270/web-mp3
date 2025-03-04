@@ -18,7 +18,7 @@
             </div>
             <div id="Search" class="tab-content" style="display:none">
                 <div style="position: relative;">
-                    <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" oninput="search(this.value)">
+                    <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" oninput="search(this.value)" autocomplete="off">
                     <span onclick="document.getElementById('searchBox').value = ''; document.getElementById('searchResults').innerText = '';" id="cancelSearch">&times;</span>
                 </div>
                 <div id="searchResults"></div>
@@ -87,8 +87,7 @@
 
         <div id="queueSongMenu" class="context-menu">
             <ul>
-                <li onclick="addToPlaylist()">Add to playlist</li>
-                <li onclick="console.log(rightClickedObject)">Add to favorites</li>
+                <li onclick="addToPlaylist(prompt('Enter playlist name:'), rightClickedObject)">Add to playlist</li>
                 <li onclick="removeFromQueue()">Remove from queue</li>
                 <span></span>
                 <li onclick="goToArtist()">Go to artist</li>
@@ -115,6 +114,7 @@
         <div id="librarySongMenu" class="context-menu">
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
+                <li onclick="addToPlaylist(prompt('Enter playlist name:'), JSON.parse(rightClickedObject.target.dataset.song))">Add to playlist</li>
                 <li onclick="getSongLyrics()">Song lyrics</li>
             </ul>
         </div>
@@ -123,16 +123,17 @@
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
                 <span></span>
-                <li onclick="editPlaylist()">Edit playlist</li>
-                <li onclick="removePlaylist()">Remove playlist</li>
-                <li onclick="newPlaylist()">New playlist</li>
+                <li onclick="changePlaylistName(rightClickedObject.artist, prompt('Enter playlist name:'))">Edit name</li>
+                <li onclick="changePlaylistCover(rightClickedObject.artist, prompt('Enter relative image path:'))">Edit image</li>
+                <li onclick="removePlaylist(rightClickedObject.artist)">Remove playlist</li>
+                <li onclick="newPlaylist(prompt('Enter playlist name:'))">New playlist</li>
             </ul>
         </div>
 
         <div id="playlistSongMenu" class="context-menu">
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
-                <li onclick="removeFromPlaylist()">Remove from playlist</li>
+                <li onclick="removeFromPlaylist(rightClickedObject.target.parentElement.querySelector('summary').textContent, rightClickedObject.target.dataset.name)">Remove from playlist</li>
                 <span></span>
                 <li onclick="goToArtist(rightClickedObject.target.dataset.artist)">Go to artist</li>
                 <li onclick="goToAlbum(rightClickedObject.target.dataset.album)">Go to album</li>

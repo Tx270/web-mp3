@@ -510,6 +510,9 @@ main {
 
       .albumCover, .playlistCover {
         height: 35px;
+        width: 35px;
+        border-radius: 2px;
+        object-fit: cover;
         position: absolute;
         left: 32px;
         top: 2px;
@@ -585,8 +588,11 @@ main {
   
         .playlistCover {
           height: 80px;
+          width: 80px;
+          object-fit: cover;
           top: 7px;
           left: 40px;
+          pointer-events: none;
         }
   
         summary {

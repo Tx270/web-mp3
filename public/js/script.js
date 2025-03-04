@@ -1,19 +1,185 @@
-var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = "1", library;
-const playlists = [
-    {
-        "name": "Name",
-        "cover": "assets/covers/2e4c2d2f343d41b32f5205c1197789a4",
-        "songs": []
-    },
-    {
-        "name": "Name",
-        "cover": "assets/covers/9cdfd75c318f4b517be6d5ed0d7b4f23",
-        "songs": []
+var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = "1", library, playlists = {};
+
+
+
+async function loadPlaylists() {
+    try {
+        const response = await fetch("/api/playlists");
+        if (!response.ok) throw new Error("Failed to load playlists");
+        playlists = await response.json();
+    } catch (error) {
+        console.error("Error loading playlists:", error);
+        playlists = {};
     }
-];
+    renderPlaylists();
+}
 
+async function savePlaylists() {
+    try {
+        await fetch("/api/playlists", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(playlists)
+        });
+    } catch (error) {
+        console.error("Error saving playlists:", error);
+    }
+}
 
+async function newPlaylist(name) {
+    if (!playlists[name]) {
+        playlists[name] = {
+            cover: "assets/empty.svg",
+            songs: []
+        };
+        await savePlaylists();
+        renderPlaylists();
+    } else {
+        alert("Playlist already exists");
+    }
+}
 
+async function removePlaylist(name) {
+    if (playlists[name]) {
+        delete playlists[name];
+        await savePlaylists();
+        renderPlaylists();
+    } else {
+        alert("Playlist not found");
+    }
+}
+
+async function addToPlaylist(playlistName, song) {
+    console.log(playlistName, song);
+    if (playlists[playlistName]) {
+        playlists[playlistName].songs.push(song);
+        await savePlaylists();
+        renderPlaylists();
+    } else {
+        alert("Playlist not found");
+    }
+}
+
+async function removeFromPlaylist(playlistName, songName) {
+    console.log(playlistName, songName);
+    if (playlists[playlistName]) {
+        playlists[playlistName].songs = playlists[playlistName].songs.filter(song => song.name !== songName);
+        await savePlaylists();
+        renderPlaylists();
+    } else {
+        alert("Playlist not found");
+    }
+}
+
+async function changePlaylistCover(playlistName, cover) {
+    if (playlists[playlistName]) {
+        playlists[playlistName].cover = cover;
+        await savePlaylists();
+        renderPlaylists();
+    } else {
+        alert("Playlist not found");
+    }
+}
+
+async function changePlaylistName(oldName, newName) {
+    if (playlists[oldName]) {
+        playlists[newName] = playlists[oldName];
+        delete playlists[oldName];
+        await savePlaylists();
+        renderPlaylists();
+    } else {
+        alert("Playlist not found");
+    }
+}
+
+async function renderPlaylists() {
+    var openedPlaylists = [];
+    document.querySelectorAll("#Playlists summary").forEach(summary => {
+        if (summary.parentElement.open == true) openedPlaylists.push(summary.textContent);
+    });
+
+    const container = document.getElementById('Playlists');
+    container.innerHTML = '';
+
+    var p = Object.keys(playlists);
+    p.sort();
+
+    p.forEach(playlist => {
+        const playlistDetails = document.createElement('details');
+        playlistDetails.classList.add('playlist');
+
+        const playlistSummary = document.createElement('summary');
+        playlistSummary.classList.add('selectable');
+        playlistSummary.textContent = playlist;
+        playlistSummary.title = playlist;
+        playlistSummary.dataset.menu = "playlistMenu";
+        playlistSummary.classList.add("custom-context");
+        playlistSummary.classList.add("playlist");
+        playlistSummary.addEventListener("contextmenu", (e) => { contextmenu(e, playlistSummary.getAttribute("data-menu")); });
+        playlistSummary.ondblclick = function(){ try{ addToQueue(playlists[playlist].songs) } catch { nowPlaying = { blank: true }} };
+
+        const playlistCover = document.createElement('img');
+        playlistCover.classList.add("playlistCover");
+        playlistCover.src = playlists[playlist].cover;
+
+        playlistSummary.prepend(playlistCover);
+        playlistDetails.append(playlistSummary);
+
+        playlistSummary.addEventListener("mousedown", (event) => {
+            if (event.target.closest(".selectable") === playlistSummary) {
+                document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected"));
+                playlistSummary.classList.add("selected");
+            }
+        });
+
+        playlists[playlist].songs.forEach(song => {
+            const songSpan = document.createElement('span');
+            songSpan.classList.add('song', 'selectable');
+            songSpan.textContent = song.name;
+            songSpan.title = song.name;
+            songSpan.dataset.menu = "playlistSongMenu";
+            songSpan.classList.add("custom-context");
+            songSpan.dataset.album = song.album;
+            songSpan.dataset.artist = song.artist;
+            songSpan.dataset.dirArtist = song.dirArtist;
+            songSpan.dataset.name = song.name;
+            songSpan.addEventListener("contextmenu", (e) => { contextmenu(e, songSpan.getAttribute("data-menu")); });
+            songSpan.ondblclick = function(){ addToQueue([song]); };
+
+            songSpan.addEventListener("mousedown", (event) => {
+                if (event.target.closest(".selectable") === songSpan) {
+                    document.querySelectorAll(".selectable").forEach(el => el.classList.remove("selected"));
+                    songSpan.classList.add("selected");
+                }
+            });
+
+            const artistSpan = document.createElement('span');
+            artistSpan.textContent = song.artist;
+            artistSpan.title = song.artist;
+            artistSpan.classList.add("artistSpan");
+
+            songSpan.append(artistSpan);
+
+            playlistDetails.append(songSpan);
+        });
+
+        container.append(playlistDetails);
+    });
+
+    const addContainer = document.createElement('div');
+    addContainer.id = "addPlaylist";
+    const addPlaylist = document.createElement('img');
+    addPlaylist.src = "assets/icons/add.png";
+    addPlaylist.title = "Add playlist";
+    addPlaylist.onclick = function(){ newPlaylist(prompt("Enter playlist name:")); }
+
+    addContainer.append(addPlaylist);
+    container.append(addContainer);
+
+    document.querySelectorAll("#Playlists summary").forEach(summary => {
+        if (openedPlaylists.includes(summary.textContent)) summary.parentElement.open = true;
+    });
+}
 
 function addListeners() {
     document.querySelectorAll(".selectable").forEach(span => {
@@ -141,6 +307,8 @@ function renderLibrary(container, lib, letter = '') {
                 songSpan.addEventListener("contextmenu", (e) => { contextmenu(e, songSpan.getAttribute("data-menu")); });
 
                 songSpan.ondblclick = function(){ addToQueue([song]) };
+                songSpan.dataset.song = JSON.stringify(song);
+                console.log(song);
 
                 albumDetails.appendChild(songSpan);
             });
@@ -163,69 +331,6 @@ function renderLibrary(container, lib, letter = '') {
 
         container.appendChild(artistDetails);
     });
-}
-
-async function renderPlaylists() {
-    const container = document.getElementById('Playlists');
-    container.innerHTML = '';
-
-    playlists.forEach(playlist => {
-        const playlistDetails = document.createElement('details');
-        playlistDetails.classList.add('playlist');
-
-        const playlistSummary = document.createElement('summary');
-        playlistSummary.classList.add('selectable');
-        playlistSummary.textContent = playlist.name;
-        playlistSummary.title = playlist.name;
-        playlistSummary.dataset.menu = "playlistMenu";
-        playlistSummary.classList.add("custom-context");
-        playlistSummary.classList.add("playlist");
-        playlistSummary.addEventListener("contextmenu", (e) => { contextmenu(e, playlistSummary.getAttribute("data-menu")); });
-        playlistSummary.ondblclick = function(){ addToQueue(playlist.songs) };
-
-        const playlistCover = document.createElement('img');
-        playlistCover.classList.add("playlistCover");
-        playlistCover.src = playlist.cover;
-
-        playlistSummary.prepend(playlistCover);
-        playlistDetails.append(playlistSummary);
-
-        playlist.songs.forEach(song => {
-            const songSpan = document.createElement('span');
-            songSpan.classList.add('song', 'selectable');
-            songSpan.textContent = song.name;
-            songSpan.title = song.name;
-            songSpan.dataset.menu = "playlistSongMenu";
-            songSpan.classList.add("custom-context");
-            songSpan.dataset.album = song.album;
-            songSpan.dataset.artist = song.artist;
-            songSpan.dataset.dirArtist = song.dirArtist
-            songSpan.dataset.name = song.name;
-            songSpan.addEventListener("contextmenu", (e) => { contextmenu(e, songSpan.getAttribute("data-menu")); });
-            songSpan.ondblclick = function(){ addToQueue([song]); };
-
-            const artistSpan = document.createElement('span');
-            artistSpan.textContent = song.artist;
-            artistSpan.title = song.artist;
-            artistSpan.classList.add("artistSpan");
-
-            songSpan.append(artistSpan);
-
-            playlistDetails.append(songSpan);
-        });
-
-        container.append(playlistDetails);
-    });
-
-    const addContainer = document.createElement('div');
-    addContainer.id = "addPlaylist";
-    const addPlaylist = document.createElement('img');
-    addPlaylist.src = "assets/icons/add.png";
-    addPlaylist.title = "Add playlist";
-    addPlaylist.onclick = function(){ newPlaylist(); }
-
-    addContainer.append(addPlaylist);
-    container.append(addContainer);
 }
 
 function openTab(evt, tabName) {
@@ -832,6 +937,6 @@ function toggleAudio() {
 
 async function init() {
     await loadLibrary();
-    await renderPlaylists();
+    await loadPlaylists();
     addListeners();
 }
