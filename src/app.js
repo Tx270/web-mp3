@@ -3,6 +3,7 @@ const express = require("express");
 const getLibrary = require("./utils/scan");
 const { fileRead, fileWrite } = require("./utils/file");
 const path = require("path");
+const { exec } = require("child_process");
 const fs = require('fs');
 
 const app = express();
@@ -39,6 +40,27 @@ app.get("/api/queue", (req, res) => {
 
 app.post("/api/queue", (req, res) => {
     return fileWrite("queue.json", req.body, res);
+});
+
+app.post("/api/open", (req, res) => {
+    const normalizedPath = path.dirname(path.resolve(req.body.path));
+        
+    let command;
+    if (process.platform === "win32") {
+        command = `explorer "${normalizedPath}"`;
+    } else if (process.platform === "darwin") {
+        command = `open "${normalizedPath}"`;
+    } else {
+        command = `xdg-open "${normalizedPath}"`;
+    }
+    
+    exec(command, (error) => {
+        if (error) {
+            console.error("Error opening folder:", error.message);
+            return res.status(500).json({ error: 'Failed to open folder', details: error.message });
+        }
+        res.status(200).json({ message: 'Folder opened successfully' });
+    });
 });
 
 

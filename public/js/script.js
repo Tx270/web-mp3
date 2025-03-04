@@ -411,6 +411,19 @@ function search(query) {
     });
 }
 
+async function openPath(path = JSON.parse(rightClickedObject.target.dataset.song).path) {
+    path = "public".concat(path);
+    
+    try {
+        await fetch("/api/open", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path })
+        });
+    } catch (error) {
+        console.error("Error saving playlists:", error);
+    }
+}
 
 
 function startUpdatingTime() {

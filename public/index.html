@@ -87,6 +87,7 @@
                 <span></span>
                 <li onclick="goToArtist()">Go to artist</li>
                 <li onclick="goToAlbum()">Go to album</li>
+                <li onclick="openPath(rightClickedObject.path)">Show in explorer</li>
                 <span></span>
                 <li onclick="getArtistDetails()">Artist details</li>
                 <li onclick="getSongLyrics()">Song lyrics</li>
@@ -110,6 +111,7 @@
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
                 <li onclick="addToPlaylist(prompt('Enter playlist name:'), JSON.parse(rightClickedObject.target.dataset.song))">Add to playlist</li>
+                <li onclick="openPath()">Show in explorer</li>
                 <li onclick="getSongLyrics()">Song lyrics</li>
             </ul>
         </div>
