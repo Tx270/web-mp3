@@ -1,5 +1,6 @@
 public/mp3
 public/assets/covers
+public/assets/playlistCovers
 data/library.json
 data/playlists.json
 data/queue.json

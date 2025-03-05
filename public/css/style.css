@@ -750,20 +750,114 @@ main {
       right: 20px;
       top: 20px;
     }
+  }
 
-    &#songLyricsDialog {
-      p {
-        text-align: center;
-        padding: 10% 15%;
-        margin: 0;
-        font-size: 20px;
-        text-indent: 0px;
-        line-height: 30px;
-      }
+  #songLyricsDialog {
+    p {
+      text-align: center;
+      padding: 10% 15%;
+      margin: 0;
+      font-size: 20px;
+      text-indent: 0px;
+      line-height: 30px;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: -40px;
+    }
+  }
+
+  #newPlaylistDialog {
+    overflow: hidden;
+    width: 30%;
+
+    form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      width: 100%;
+      height: 100%;
+
+      margin: auto;
+
       h1 {
-        text-align: center;
-        margin-top: 50px;
-        margin-bottom: -40px;
+        margin: -30px 0 50px;
+      }
+
+      label {
+        display: block;
+        margin: 30px;
+        width: 60%;
+        font-size: large;
+
+        .formError {
+          color: red;
+          font-size: 12px;
+          position: absolute;
+          margin: 10px 0;
+          text-align: center;
+          width: 60%;
+        }
+  
+        input[type='text'] {
+          width: calc(100% - 24px);
+          height: 30px;
+          margin-top: 10px;
+          padding: 5px 12px;
+          font-size: 16px;
+          border: none;
+          border-radius: 7px;
+          background-color: var(--highlight);
+          color: var(--text);
+        }
+  
+        .input_container {
+          border-radius: 7px;
+          width: 100%;
+          background-color: var(--highlight);
+          margin-top: 10px;
+  
+          input[type=file] {
+            border-radius: 7px;
+            text-align: center;
+  
+            &::file-selector-button {
+              background-color: var(--highlight);
+              color: var(--text);
+              border: 0px;
+              padding: 10px 15px;
+              margin-right: 20px;
+              transition: .5s;
+              cursor: pointer;
+            }
+  
+            &::file-selector-button:hover {
+              background-color: #eee;
+              color: black;
+            }
+          }
+        }
+      }
+  
+      button {
+        width: 60%;
+        padding: 10px;
+        font-size: large;
+        transition: .5s;
+        cursor: pointer;
+        background-color: var(--highlight);
+        border: none;
+        border-radius: 7px;
+        margin: 30px;
+        color: var(--text);
+
+        &:hover {
+          background-color: #eee;
+          color: black;
+        }
       }
     }
   }
@@ -783,7 +877,7 @@ main {
   background-color: white;
   border-radius: 15px;
   color: black;
-  z-index: 800;
+  z-index: 5000;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 
   transition: opacity 0.5s ease-in;
@@ -792,6 +886,7 @@ main {
   img {
     height: 40px;
     width: 40px;
+    object-fit: cover;
     margin-right: 13px;
     border-radius: 5px;
   }

@@ -1,6 +1,6 @@
 var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = "1", library, playlists = {};
 
-
+// TODO: Fix notication blocking clicks
 
 async function loadPlaylists() {
     try {
@@ -28,19 +28,95 @@ async function savePlaylists() {
     }
 }
 
-async function newPlaylist(name) {
+async function newPlaylist(name, cover) {
     if (!playlists[name]) {
         playlists[name] = {
-            cover: "assets/empty.svg",
+            cover: cover,
             songs: []
         };
         await savePlaylists();
         renderPlaylists();
-        showNotification("Playlist "+name+" created successfully", false, playlists[name].cover);
+        showNotification("Playlist " + name + " created successfully", false, cover);
     } else {
         showNotification("Playlist of that name already exists", true);
     }
 }
+
+function validateName() {
+    const name = document.getElementById("playlistNameInp").value.trim();
+    const e = document.getElementById("playlistNameInpError");
+
+    if (!name) {
+        e.innerText = "Playlist name is required";
+        return false;
+    } else if (playlists[name]) {
+        e.innerText = "Playlist of that name already exists";
+        return false;
+    } else if (name.length > 30) {
+        e.innerText = "Playlist name must be shorter than 30 characters";
+        return false;
+    }
+    e.innerText = "";
+    return true;
+}
+
+function validateCover() {
+    const file = document.getElementById("playlistCoverInp").files[0];
+    const e = document.getElementById("playlistCoverInpError");
+    if (file) {
+        if (!file.type.startsWith("image/")) {
+            e.innerText = "Cover file must be an image";
+            return false;
+        } else if (file.size > 5 * 1024 * 1024) {
+            e.innerText = "Cover file must be smaller than 5MB";
+            return false;
+        }
+    }
+    e.innerText = "";
+    return true;
+}
+
+async function validateNewPlaylistForm(e) {
+    e.preventDefault();
+
+    if (!validateName() || !validateCover()) return;
+
+    let coverUrl = "assets/empty.svg";
+
+    if (document.getElementById("playlistCoverInp").files.length > 0) {
+        const file = document.getElementById("playlistCoverInp").files[0];
+        const formData = new FormData();
+        formData.append("cover", file);
+
+        try {
+            const response = await fetch("/api/playlistCover", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                coverUrl = result.path;
+            } else {
+                showNotification("Playlist cover upload error", true);
+                document.getElementById('newPlaylistDialog').close();
+                document.getElementById("newPlaylistForm").reset();
+                return;
+            }
+        } catch (error) {
+            showNotification("Playlist cover upload error: " + error, true);
+            document.getElementById('newPlaylistDialog').close();
+            document.getElementById("newPlaylistForm").reset();
+            return;
+        }
+    }
+
+    await newPlaylist(document.getElementById("playlistNameInp").value.trim(), coverUrl);
+
+    document.getElementById('newPlaylistDialog').close();
+    document.getElementById("newPlaylistForm").reset();
+}
+
 
 async function removePlaylist(name) {
     if (playlists[name]) {
@@ -176,7 +252,7 @@ async function renderPlaylists() {
     const addPlaylist = document.createElement('img');
     addPlaylist.src = "assets/icons/add.png";
     addPlaylist.title = "Add playlist";
-    addPlaylist.onclick = function(){ newPlaylist(prompt("Enter playlist name:")); }
+    addPlaylist.onclick = function(){ document.getElementById('newPlaylistDialog').showModal(); }
 
     addContainer.append(addPlaylist);
     container.append(addContainer);
@@ -540,7 +616,7 @@ function updatePlaylistMenu() {
     document.querySelectorAll(".playlistSubmenu").forEach(submenu => {
         submenu.innerHTML = "";
 
-        Object.keys(playlists).forEach(playlist => {
+        Object.keys(playlists).toSorted().forEach(playlist => {
             let item = document.createElement("li");
             item.textContent = playlist;
             item.onclick = () => {
