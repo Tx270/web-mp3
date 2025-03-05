@@ -480,7 +480,6 @@ function formatTime(seconds) {
 }
 
 
-
 function showLoader() {
     document.getElementById("loader").style.display = "flex";
 }
@@ -846,8 +845,6 @@ function initializeDragula() {
 }
 
 
-
-
 function removeFromQueue() {
     if (nowPlaying.queueId === rightClickedObject.queueId) audioStop();
 
@@ -946,7 +943,6 @@ function clearQueue() {
 }
 
 
-
 function audioStop() {
     if(nowPlaying.blank) return;
 
@@ -992,9 +988,6 @@ function toggleAudio() {
 
     document.getElementById("play").classList.contains("playing") ? audioPlay() : audioPause();
 }
-
-
-
 
 
 async function init() {
