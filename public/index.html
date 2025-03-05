@@ -79,8 +79,11 @@
             <img src="assets/icons/sound.png" alt="mute" id="mute" onclick="mute()" title="Mute">
             <input type="range" min="0" max="100" step="1" value="100" oninput="updateVolume()" id="volumeRange">
         </section>
+    </main>
 
-        <div id="queueSongMenu" class="context-menu">
+
+    <div id="context-menus">
+        <div id="queueSongMenu">
             <ul>
                 <li class="submenuParent">
                     Add to playlist
@@ -97,20 +100,20 @@
             </ul>
         </div>
 
-        <div id="libraryArtistMenu" class="context-menu">
+        <div id="libraryArtistMenu">
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
                 <li onclick="getArtistDetails()">Artist details</li>
             </ul>
         </div>
 
-        <div id="libraryAlbumMenu" class="context-menu">
+        <div id="libraryAlbumMenu">
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
             </ul>
         </div>
 
-        <div id="librarySongMenu" class="context-menu">
+        <div id="librarySongMenu">
             <ul>
                 <li class="submenuParent">
                     Add to playlist
@@ -123,7 +126,7 @@
             </ul>
         </div>
 
-        <div id="playlistMenu" class="context-menu">
+        <div id="playlistMenu">
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
                 <span></span>
@@ -134,7 +137,7 @@
             </ul>
         </div>
 
-        <div id="playlistSongMenu" class="context-menu">
+        <div id="playlistSongMenu">
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
                 <li onclick="removeFromPlaylist(rightClickedObject.target.parentElement.querySelector('summary').textContent, rightClickedObject.target.dataset.name)">Remove from playlist</li>
@@ -146,7 +149,9 @@
                 <li onclick="getSongLyrics(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.name)">Song lyrics</li>
             </ul>
         </div>
+    </div>
 
+    <div id="dialogs">
         <dialog id="artistDetailsDialog">
             <span class="close" onclick="document.getElementById('artistDetailsDialog').close();">&times;</span>
             <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Artist Image">
@@ -158,19 +163,18 @@
             <h1></h1>
             <p></p>
         </dialog>
+    </div>
 
+    <div id="loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
 
-        <div id="alert">
-            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="alert">
-            <p></p>
-        </div>
-
-        <div id="loader">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-    </main>
+    <div id="alert">
+        <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="alert">
+        <p></p>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
     <script src="js/script.js"></script>

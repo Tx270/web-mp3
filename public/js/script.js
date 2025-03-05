@@ -222,8 +222,7 @@ function addListeners() {
 
     document.addEventListener("click", (e) => {
         if(!e.target.classList.contains("contextbtn")) {
-            let menus = document.querySelectorAll(".context-menu");
-            menus.forEach(menu => {
+            document.getElementById("context-menus").querySelectorAll(":scope > div").forEach(menu => {
                 menu.style.display = "none";
             });
         }
@@ -496,7 +495,7 @@ function hideLoader() {
 function contextmenu(e, id, x, y) {
     e.preventDefault();
 
-    document.querySelectorAll(".context-menu").forEach(m => {
+    document.getElementById("context-menus").querySelectorAll(":scope > div").forEach(m => {
         m.style.display = "none";
     });
     
@@ -937,6 +936,7 @@ function shuffleQueue() {
         tbody.appendChild(song.element);
     });
 
+    showNotification("Queue shuffled");
     saveQueue();
 }
 
@@ -944,6 +944,7 @@ function clearQueue() {
     queue = [];
     document.getElementById("queue-tbody").innerHTML = '';
     audioStop();
+    showNotification("Queue cleared");
     saveQueue();
 }
 
