@@ -1,6 +1,6 @@
 var nowPlaying = { blank: true }, rightClickedObject = {}, queue = [], volume = "1", library, playlists = {};
 
-// TODO: Fix notication blocking clicks
+
 
 async function loadPlaylists() {
     try {

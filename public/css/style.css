@@ -870,6 +870,8 @@ main {
   flex-direction: row;
   position: absolute;
 
+  pointer-events: none;
+
   bottom: 10%;
   left: 50%;
   transform: translate(-50%, -50%);
