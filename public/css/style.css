@@ -692,7 +692,7 @@ main {
 
       &::after {
         content: "▶";
-        font-size: 10px;
+        font-size: 12px;
         margin-left: 60px;
         color: var(--text-color);
       }
@@ -760,6 +760,34 @@ main {
         margin-top: 50px;
         margin-bottom: -40px;
       }
+    }
+  }
+
+  #alert {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    position: absolute;
+
+    bottom: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 13px;
+    background-color: white;
+    border-radius: 15px;
+    color: black;
+    z-index: 800;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+
+    transition: opacity 0.5s ease-in;
+    opacity: 0;
+
+    img {
+      height: 40px;
+      width: 40px;
+      margin-right: 13px;
+      border-radius: 5px;
     }
   }
 

@@ -8,7 +8,7 @@ async function loadPlaylists() {
         if (!response.ok) throw new Error("Failed to load playlists");
         playlists = await response.json();
     } catch (error) {
-        console.error("Error loading playlists:", error);
+        showNotification("Error loading playlists: " + error.message, true);
         playlists = {};
     }
     renderPlaylists();
@@ -24,7 +24,7 @@ async function savePlaylists() {
             body: JSON.stringify(playlists)
         });
     } catch (error) {
-        console.error("Error saving playlists:", error);
+        showNotification("Error saving playlists: " + error.message, true);
     }
 }
 
@@ -36,18 +36,21 @@ async function newPlaylist(name) {
         };
         await savePlaylists();
         renderPlaylists();
+        showNotification("Playlist "+name+" created successfully", false, playlists[name].cover);
     } else {
-        alert("Playlist already exists");
+        showNotification("Playlist of that name already exists", true);
     }
 }
 
 async function removePlaylist(name) {
     if (playlists[name]) {
+        let cover = playlists[name].cover;
         delete playlists[name];
         await savePlaylists();
         renderPlaylists();
+        showNotification("Playlist "+name+" removed successfully", false, cover);
     } else {
-        alert("Playlist not found");
+        showNotification("Playlist not found", true);
     }
 }
 
@@ -56,8 +59,9 @@ async function addToPlaylist(playlistName, song) {
         playlists[playlistName].songs.push(song);
         await savePlaylists();
         renderPlaylists();
+        showNotification("Song added to playlist "+playlistName, false, playlists[playlistName].cover);
     } else {
-        alert("Playlist not found");
+        showNotification("Playlist not found", true);
     }
 }
 
@@ -66,8 +70,9 @@ async function removeFromPlaylist(playlistName, songName) {
         playlists[playlistName].songs = playlists[playlistName].songs.filter(song => song.name !== songName);
         await savePlaylists();
         renderPlaylists();
+        showNotification("Song removed from playlist "+playlistName, false, playlists[playlistName].cover);
     } else {
-        alert("Playlist not found");
+        showNotification("Playlist not found", true);
     }
 }
 
@@ -77,7 +82,7 @@ async function changePlaylistCover(playlistName, cover) {
         await savePlaylists();
         renderPlaylists();
     } else {
-        alert("Playlist not found");
+        showNotification("Playlist not found", true);
     }
 }
 
@@ -88,7 +93,7 @@ async function changePlaylistName(oldName, newName) {
         await savePlaylists();
         renderPlaylists();
     } else {
-        alert("Playlist not found");
+        showNotification("Playlist not found", true);
     }
 }
 
@@ -240,7 +245,7 @@ async function loadLibrary() {
         renderLibrary(container, library, letter);
 
     } catch (error) {
-        console.error('Error loading mp3 library:', error);
+        showNotification('Error loading mp3 library: ' + error.message, true);
         document.getElementById('sidebar').innerHTML = 'Error loading mp3 library: <br>' + error;
     }
 }
@@ -423,7 +428,7 @@ async function openPath(path = JSON.parse(rightClickedObject.target.dataset.song
             body: JSON.stringify({ path })
         });
     } catch (error) {
-        console.error("Error saving playlists:", error);
+        showNotification("Error opening path: " + error.message, true);
     }
 }
 
@@ -755,7 +760,7 @@ async function loadQueue() {
         const savedQueue = await response.json();
         addToQueue(savedQueue, false);
     } catch (error) {
-        console.error("Error loading queue:", error);
+        showNotification("Error loading queue: " + error.message, true);
     }
 }
 
@@ -767,7 +772,7 @@ async function saveQueue() {
             body: JSON.stringify(queue)
         });
     } catch (error) {
-        console.error("Error saving queue:", error);
+        showNotification("Error saving queue: " + error.message, true);
     }
 }
 
@@ -835,7 +840,7 @@ function initializeDragula() {
                 row.ondblclick = function() { newSong(song); };
                 newQueue.push(song);
             } catch (error) {
-                console.error('Error rebuilding queue item:', error);
+                showNotification('Error rebuilding queue item: ' + error.message, true);
             }
         });
         
@@ -941,6 +946,50 @@ function clearQueue() {
     audioStop();
     saveQueue();
 }
+
+function showNotification(text, error = false, imageUrl) {
+    const container = document.getElementById('alert');
+
+    if (container.style.opacity !== "0") {
+        container.style.opacity = "0";
+        setTimeout(() => {
+            updateNotification(text, error, imageUrl);
+        }, 500);
+    } else {
+        updateNotification(text, error, imageUrl);
+    }
+}
+
+function updateNotification(text, error, imageUrl) {
+    const container = document.getElementById('alert');
+    const img = container.querySelector("img");
+    const p = container.querySelector("p");
+    
+    if(!imageUrl) {
+        img.src = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+        img.style.width = "0";
+        img.style.margin = "0";
+    } else {
+        img.src = imageUrl;
+        img.style.width = "40px";
+        img.style.marginRight = "13px";
+    }
+
+    p.innerText = text;
+
+    if(!error) {
+        p.style.color = "black";
+    } else {
+        p.style.color = "red";
+    }
+
+    container.style.opacity = "1";
+
+    setTimeout(() => {
+        container.style.opacity = "0";
+    }, 4000);
+}
+
 
 
 function audioStop() {
