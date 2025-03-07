@@ -3,7 +3,10 @@ const path = require("path");
 
 
 function fileRead(file, res) {
-    const filePath = path.join(__dirname, "..", "..", "data", file);
+    const dataDir = path.join(__dirname, '..', '..', 'data');
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+    const filePath = path.join(dataDir, file);
+    if (!fs.existsSync(filePath)) return res.json({});
 
     fs.readFile(filePath, "utf8", (err, data) => {
         if (err) {
@@ -15,9 +18,9 @@ function fileRead(file, res) {
 
         try {
             const jsonData = JSON.parse(data);
-            res.json(jsonData);
+            return res.json(jsonData);
         } catch (parseError) {
-            res.status(500).json({ error: "JSON parsing error." });
+            return res.status(500).json({ error: "JSON parsing error." });
         }
     });
 }
@@ -33,7 +36,7 @@ function fileWrite(file, data, res) {
         if (err) {
             return res.status(500).json({ error: "Failed to save file." });
         }
-        res.json({ message: "File saved successfully." });
+        return res.json({ message: "File saved successfully." });
     });
 }
 

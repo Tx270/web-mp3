@@ -18,9 +18,14 @@ app.get('/api/scan', async (req, res) => {
     try {
         const library = await getLibrary(path.join(__dirname, '..', 'public', 'mp3'));
         const libraryJson = JSON.stringify(library, null, 2);
+
+        const dataDir = path.join(__dirname, '..', 'data');
+        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
         fs.writeFileSync(path.join(__dirname, '..', 'data', 'library.json'), libraryJson, 'utf8');
+        
         res.status(200).json({ message: 'Library info saved successfully' });
     } catch (error) {
+        console.error('Error saving library info:', error);
         res.status(500).json({ error: 'Failed to save library info' });
     }
 });

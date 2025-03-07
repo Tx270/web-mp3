@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mp3 Player</title>
+    <title>Mp3 player</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css">
     <link rel="shortcut icon" href="assets/empty.svg" type="image/x-icon"> 
 </head>
-<body onload="init()">
+<body>
     <main>
         <section id="sidebar">
             <div id="Library" class="tab-content">
@@ -18,7 +18,7 @@
             </div>
             <div id="Search" class="tab-content" style="display:none">
                 <div style="position: relative;">
-                    <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" oninput="search(this.value)" autocomplete="off">
+                    <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" oninput="player.uiManager.search(this.value)" autocomplete="off">
                     <span onclick="document.getElementById('searchBox').value = ''; document.getElementById('searchResults').innerText = '';" id="cancelSearch">&times;</span>
                 </div>
                 <div id="searchResults"></div>
@@ -41,9 +41,9 @@
         </section>
         <section id="tabs">
             <div id="tab-buttons">
-                <button class="tab-button active" onclick="openTab(event, 'Library')">Library</button>
-                <button class="tab-button" onclick="openTab(event, 'Playlists')">Playlists</button>
-                <button class="tab-button" onclick="openTab(event, 'Search')" id="SearchButton">Search</button>
+                <button class="tab-button active" onclick="player.uiManager.openTab(event, 'Library')">Library</button>
+                <button class="tab-button" onclick="player.uiManager.openTab(event, 'Playlists')">Playlists</button>
+                <button class="tab-button" onclick="player.uiManager.openTab(event, 'Search')" id="SearchButton">Search</button>
             </div>
         </section>
         <section id="song">
@@ -52,32 +52,32 @@
                 <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" onclick="document.getElementById('coverDialog').close()">
             </dialog>
             <div>
-                <span id="title" onclick="goToAlbum(nowPlaying.album)"></span>
-                <span id="artist" onclick="goToArtist(nowPlaying.artist)"></span>
+                <span id="title" onclick="player.uiManager.goToAlbum(player.nowPlaying.album)"></span>
+                <span id="artist" onclick="player.uiManager.goToArtist(player.nowPlaying.artist)"></span>
             </div>
         </section>
         <section id="controls">
             <div id="buttons">
-                <img src="assets/icons/shuffle.svg" alt="shuffle" id="shuffle" onclick="shuffleQueue()" title="Shuffle">
-                <img src="assets/icons/back.png" alt="back" id="back" onclick="previousSong()" title="Previous">
-                <img src="assets/icons/play.png" alt="play" id="play" onclick="toggleAudio()" title="Play">
-                <img src="assets/icons/stop.png" alt="stop" id="stop" onclick="audioStop()" title="Stop">
-                <img src="assets/icons/next.png" alt="next" id="next" onclick="nextSong()" title="Next">
-                <img src="assets/icons/clear.svg" alt="clear" id="clear" onclick="clearQueue()" title="Clear">
+                <img src="assets/icons/shuffle.svg" alt="shuffle" id="shuffle" onclick="player.queueManager.shuffle()" title="Shuffle">
+                <img src="assets/icons/back.png" alt="back" id="back" onclick="player.audioManager.previous()" title="Previous">
+                <img src="assets/icons/play.png" alt="play" id="play" onclick="player.audioManager.toggle()" title="Play">
+                <img src="assets/icons/stop.png" alt="stop" id="stop" onclick="player.audioManager.stop()" title="Stop">
+                <img src="assets/icons/next.png" alt="next" id="next" onclick="player.audioManager.next()" title="Next">
+                <img src="assets/icons/clear.svg" alt="clear" id="clear" onclick="player.queueManager.clear()" title="Clear">
             </div>
 
             <div id="seek">
                 <span id="progressTime">0:00</span>
-                <input type="range" min="0" step="0.01" value="0" oninput="updateTime()" id="progress" class="disabledRange">
+                <input type="range" min="0" step="0.01" value="0" oninput="player.audioManager.time()" id="progress" class="disabledRange">
                 <span id="progressTotal">0:00</span>
             </div>
             
         </section>
         <section id="volume">
-            <img src="assets/icons/artist.png" alt="details" id="details" onclick="if(!nowPlaying.blank) getArtistDetails(nowPlaying.artist, nowPlaying.dirArtist)" title="Artist Details">
-            <img src="assets/icons/microphone.png" alt="lyrics" id="lyrics" onclick="if(!nowPlaying.blank) getSongLyrics(nowPlaying.artist, nowPlaying.name)" title="Song Lyrics">
-            <img src="assets/icons/sound.png" alt="mute" id="mute" onclick="mute()" title="Mute">
-            <input type="range" min="0" max="100" step="1" value="100" oninput="updateVolume()" id="volumeRange">
+            <img src="assets/icons/artist.png" alt="details" id="details" onclick="if(!player.nowPlaying.blank) player.apiManager.getArtistDetails()" title="Artist Details">
+            <img src="assets/icons/microphone.png" alt="lyrics" id="lyrics" onclick="if(!player.nowPlaying.blank) player.apiManager.getSongLyrics()" title="Song Lyrics">
+            <img src="assets/icons/sound.png" alt="mute" id="mute" onclick="player.audioManager.mute()" title="Mute">
+            <input type="range" min="0" max="100" step="1" value="100" oninput="player.audioManager.volume()" id="volumeRange">
         </section>
     </main>
 
@@ -89,27 +89,27 @@
                     Add to playlist
                     <ul class="playlistSubmenu"></ul>
                 </li>
-                <li onclick="removeFromQueue()">Remove from queue</li>
+                <li onclick="player.queueManager.removeSong()">Remove from queue</li>
                 <span></span>
-                <li onclick="goToArtist()">Go to artist</li>
-                <li onclick="goToAlbum()">Go to album</li>
-                <li onclick="openPath(rightClickedObject.path)">Show in explorer</li>
+                <li onclick="player.uiManager.goToArtist()">Go to artist</li>
+                <li onclick="player.uiManager.goToAlbum()">Go to album</li>
+                <li onclick="player.utils.openPath(player.rightClickedObject.path)">Show in explorer</li>
                 <span></span>
-                <li onclick="getArtistDetails()">Artist details</li>
-                <li onclick="getSongLyrics()">Song lyrics</li>
+                <li onclick="player.apiManager.getArtistDetails()">Artist details</li>
+                <li onclick="player.apiManager.getSongLyrics()">Song lyrics</li>
             </ul>
         </div>
 
         <div id="libraryArtistMenu">
             <ul>
-                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
-                <li onclick="getArtistDetails()">Artist details</li>
+                <li onclick="player.utils.dbClickThis(player.rightClickedObject.target)">Add to queue</li>
+                <li onclick="player.apiManager.getArtistDetails()">Artist details</li>
             </ul>
         </div>
 
         <div id="libraryAlbumMenu">
             <ul>
-                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
+                <li onclick="player.utils.dbClickThis(player.rightClickedObject.target)">Add to queue</li>
             </ul>
         </div>
 
@@ -119,30 +119,30 @@
                     Add to playlist
                     <ul class="playlistSubmenu" data-></ul>
                 </li>
-                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
+                <li onclick="player.utils.dbClickThis(player.rightClickedObject.target)">Add to queue</li>
                 <span></span>
-                <li onclick="openPath()">Show in explorer</li>
-                <li onclick="getSongLyrics()">Song lyrics</li>
+                <li onclick="player.utils.openPath()">Show in explorer</li>
+                <li onclick="player.apiManager.getSongLyrics()">Song lyrics</li>
             </ul>
         </div>
 
         <div id="playlistMenu">
             <ul>
-                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
-                <li onclick="removePlaylist(rightClickedObject.artist)">Remove playlist</li>
+                <li onclick="player.utils.dbClickThis(player.rightClickedObject.target)">Add to queue</li>
+                <li onclick="player.playlistManager.removePlaylist(player.rightClickedObject.artist)">Remove playlist</li>
             </ul>
         </div>
 
         <div id="playlistSongMenu">
             <ul>
-                <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
-                <li onclick="removeFromPlaylist(rightClickedObject.target.parentElement.querySelector('summary').textContent, rightClickedObject.target.dataset.name)">Remove from playlist</li>
+                <li onclick="player.utils.dbClickThis(rightClickedObject.target)">Add to queue</li>
+                <li onclick="player.playlistManager.removeSong(rightClickedObject.target.parentElement.querySelector('summary').textContent, rightClickedObject.target.dataset.name)">Remove from playlist</li>
                 <span></span>
-                <li onclick="goToArtist(rightClickedObject.target.dataset.artist)">Go to artist</li>
-                <li onclick="goToAlbum(rightClickedObject.target.dataset.album)">Go to album</li>
+                <li onclick="player.uiManager.goToArtist(rightClickedObject.target.dataset.artist)">Go to artist</li>
+                <li onclick="player.uiManager.goToAlbum(rightClickedObject.target.dataset.album)">Go to album</li>
                 <span></span>
-                <li onclick="getArtistDetails(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.dirArtist)">Artist details</li>
-                <li onclick="getSongLyrics(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.name)">Song lyrics</li>
+                <li onclick="player.apiManager.getArtistDetails(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.dirArtist)">Artist details</li>
+                <li onclick="player.apiManager.getSongLyrics(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.name)">Song lyrics</li>
             </ul>
         </div>
     </div>
@@ -195,6 +195,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
-    <script src="js/script.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

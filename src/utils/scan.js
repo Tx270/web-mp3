@@ -33,16 +33,16 @@ function getCover(filePath) {
 }
 
 function clearCoversDirectory(directory) {
-    if (fs.existsSync(directory)) {
-        fs.readdirSync(directory).forEach((file) => {
-            const filePath = path.join(directory, file);
-            if (fs.lstatSync(filePath).isDirectory()) {
-                clearCoversDirectory(filePath);
-            } else {
-                fs.unlinkSync(filePath);
-            }
-        });
-    }
+    if (!fs.existsSync(directory)) return;
+
+    fs.readdirSync(directory).forEach((file) => {
+        const filePath = path.join(directory, file);
+        if (fs.lstatSync(filePath).isDirectory()) {
+            clearCoversDirectory(filePath);
+        } else {
+            fs.unlinkSync(filePath);
+        }
+    });
 }
 
 async function getLibrary(directory) {
@@ -51,6 +51,7 @@ async function getLibrary(directory) {
     fs.mkdirSync(coversDir, { recursive: true });
 
     let library = {};
+    if (!fs.existsSync(directory)) return library;
     let d = fs.readdirSync(directory);
     let totalArtists = d.length;
     let currentArtist = 0;
