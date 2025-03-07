@@ -129,11 +129,7 @@
         <div id="playlistMenu">
             <ul>
                 <li onclick="dbClickThis(rightClickedObject.target)">Add to queue</li>
-                <span></span>
-                <li onclick="changePlaylistName(rightClickedObject.artist, prompt('Enter playlist name:'))">Edit name</li>
-                <li onclick="changePlaylistCover(rightClickedObject.artist, prompt('Enter relative image path:'))">Edit image</li>
                 <li onclick="removePlaylist(rightClickedObject.artist)">Remove playlist</li>
-                <li onclick="document.getElementById('newPlaylistDialog').showModal()">New playlist</li>
             </ul>
         </div>
 
