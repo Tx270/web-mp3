@@ -12,14 +12,12 @@
 <body>
     <main>
         <section id="sidebar">
-            <div id="Library" class="tab-content">
-            </div>
-            <div id="Playlists" class="tab-content" style="display:none">
-            </div>
+            <div id="Library" class="tab-content"></div>
+            <div id="Playlists" class="tab-content" style="display:none"></div>
             <div id="Search" class="tab-content" style="display:none">
                 <div style="position: relative;">
-                    <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" oninput="player.uiManager.search(this.value)" autocomplete="off">
-                    <span onclick="document.getElementById('searchBox').value = ''; document.getElementById('searchResults').innerText = '';" id="cancelSearch">&times;</span>
+                    <input type="text" id="searchBox" placeholder="Enter search query..." spellcheck="false" autocomplete="off">
+                    <span id="cancelSearch">&times;</span>
                 </div>
                 <div id="searchResults"></div>
             </div>
@@ -35,49 +33,47 @@
                         <th>Length</th>
                     </tr>
                 </thead>
-                <tbody id="queue-tbody">
-                </tbody>
+                <tbody id="queue-tbody"></tbody>
             </table>
         </section>
         <section id="tabs">
             <div id="tab-buttons">
-                <button class="tab-button active" onclick="player.uiManager.openTab(event, 'Library')">Library</button>
-                <button class="tab-button" onclick="player.uiManager.openTab(event, 'Playlists')">Playlists</button>
-                <button class="tab-button" onclick="player.uiManager.openTab(event, 'Search')" id="SearchButton">Search</button>
+                <button class="tab-button active">Library</button>
+                <button class="tab-button">Playlists</button>
+                <button class="tab-button" id="SearchButton">Search</button>
             </div>
         </section>
         <section id="song">
-            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" id="miniCover" onclick="document.getElementById('coverDialog').showModal()" style="width: 0;">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="album cover" class="cover" id="miniCover" style="width: 0;">
             <dialog id="coverDialog">
-                <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="album cover" class="cover" onclick="document.getElementById('coverDialog').close()">
+                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="album cover" class="cover">
             </dialog>
             <div>
-                <span id="title" onclick="player.uiManager.goToAlbum(player.nowPlaying.album)"></span>
-                <span id="artist" onclick="player.uiManager.goToArtist(player.nowPlaying.artist)"></span>
+                <span id="title"></span>
+                <span id="artist"></span>
             </div>
         </section>
         <section id="controls">
             <div id="buttons">
-                <img src="assets/icons/shuffle.svg" alt="shuffle" id="shuffle" onclick="player.queueManager.shuffle()" title="Shuffle">
-                <img src="assets/icons/back.png" alt="back" id="back" onclick="player.audioManager.previous()" title="Previous">
-                <img src="assets/icons/play.png" alt="play" id="play" onclick="player.audioManager.toggle()" title="Play">
-                <img src="assets/icons/stop.png" alt="stop" id="stop" onclick="player.audioManager.stop()" title="Stop">
-                <img src="assets/icons/next.png" alt="next" id="next" onclick="player.audioManager.next()" title="Next">
-                <img src="assets/icons/clear.svg" alt="clear" id="clear" onclick="player.queueManager.clear()" title="Clear">
+                <img src="assets/icons/shuffle.svg" alt="shuffle" id="shuffle">
+                <img src="assets/icons/back.png" alt="back" id="back">
+                <img src="assets/icons/play.png" alt="play" id="play">
+                <img src="assets/icons/stop.png" alt="stop" id="stop">
+                <img src="assets/icons/next.png" alt="next" id="next">
+                <img src="assets/icons/clear.svg" alt="clear" id="clear">
             </div>
 
             <div id="seek">
                 <span id="progressTime">0:00</span>
-                <input type="range" min="0" step="0.01" value="0" oninput="player.audioManager.time()" id="progress" class="disabledRange">
+                <input type="range" min="0" step="0.01" value="0" id="progress" class="disabledRange">
                 <span id="progressTotal">0:00</span>
             </div>
-            
         </section>
         <section id="volume">
-            <img src="assets/icons/artist.png" alt="details" id="details" onclick="if(!player.nowPlaying.blank) player.apiManager.getArtistDetails()" title="Artist Details">
-            <img src="assets/icons/microphone.png" alt="lyrics" id="lyrics" onclick="if(!player.nowPlaying.blank) player.apiManager.getSongLyrics()" title="Song Lyrics">
-            <img src="assets/icons/sound.png" alt="mute" id="mute" onclick="player.audioManager.mute()" title="Mute">
-            <input type="range" min="0" max="100" step="1" value="100" oninput="player.audioManager.volume()" id="volumeRange">
+            <img src="assets/icons/artist.png" alt="details" id="details">
+            <img src="assets/icons/microphone.png" alt="lyrics" id="lyrics">
+            <img src="assets/icons/sound.png" alt="mute" id="mute">
+            <input type="range" min="0" max="100" step="1" value="100" id="volumeRange">
         </section>
     </main>
 
@@ -89,27 +85,27 @@
                     Add to playlist
                     <ul class="playlistSubmenu"></ul>
                 </li>
-                <li onclick="player.queueManager.removeSong()">Remove from queue</li>
+                <li id="removeFromQueue">Remove from queue</li>
                 <span></span>
-                <li onclick="player.uiManager.goToArtist()">Go to artist</li>
-                <li onclick="player.uiManager.goToAlbum()">Go to album</li>
-                <li onclick="player.utils.openPath(player.rightClickedObject.path)">Show in explorer</li>
+                <li id="goToArtist">Go to artist</li>
+                <li id="goToAlbum">Go to album</li>
+                <li id="showInExplorer">Show in explorer</li>
                 <span></span>
-                <li onclick="player.apiManager.getArtistDetails()">Artist details</li>
-                <li onclick="player.apiManager.getSongLyrics()">Song lyrics</li>
+                <li id="artistDetails">Artist details</li>
+                <li id="songLyrics">Song lyrics</li>
             </ul>
         </div>
 
         <div id="libraryArtistMenu">
             <ul>
-                <li onclick="player.utils.dbClickThis(player.rightClickedObject.target)">Add to queue</li>
-                <li onclick="player.apiManager.getArtistDetails()">Artist details</li>
+                <li id="addToQueue">Add to queue</li>
+                <li id="artistDetailsLibrary">Artist details</li>
             </ul>
         </div>
 
         <div id="libraryAlbumMenu">
             <ul>
-                <li onclick="player.utils.dbClickThis(player.rightClickedObject.target)">Add to queue</li>
+                <li id="addToQueueAlbum">Add to queue</li>
             </ul>
         </div>
 
@@ -117,64 +113,64 @@
             <ul>
                 <li class="submenuParent">
                     Add to playlist
-                    <ul class="playlistSubmenu" data-></ul>
+                    <ul class="playlistSubmenu"></ul>
                 </li>
-                <li onclick="player.utils.dbClickThis(player.rightClickedObject.target)">Add to queue</li>
+                <li id="addToQueueSong">Add to queue</li>
                 <span></span>
-                <li onclick="player.utils.openPath()">Show in explorer</li>
-                <li onclick="player.apiManager.getSongLyrics()">Song lyrics</li>
+                <li id="showInExplorerSong">Show in explorer</li>
+                <li id="songLyricsSong">Song lyrics</li>
             </ul>
         </div>
 
         <div id="playlistMenu">
             <ul>
-                <li onclick="player.utils.dbClickThis(player.rightClickedObject.target)">Add to queue</li>
-                <li onclick="player.playlistManager.removePlaylist(player.rightClickedObject.artist)">Remove playlist</li>
+                <li id="addToQueuePlaylist">Add to queue</li>
+                <li id="removePlaylist">Remove playlist</li>
             </ul>
         </div>
 
         <div id="playlistSongMenu">
             <ul>
-                <li onclick="player.utils.dbClickThis(rightClickedObject.target)">Add to queue</li>
-                <li onclick="player.playlistManager.removeSong(rightClickedObject.target.parentElement.querySelector('summary').textContent, rightClickedObject.target.dataset.name)">Remove from playlist</li>
+                <li id="addToQueuePlaylistSong">Add to queue</li>
+                <li id="removeFromPlaylist">Remove from playlist</li>
                 <span></span>
-                <li onclick="player.uiManager.goToArtist(rightClickedObject.target.dataset.artist)">Go to artist</li>
-                <li onclick="player.uiManager.goToAlbum(rightClickedObject.target.dataset.album)">Go to album</li>
+                <li id="goToArtistPlaylist">Go to artist</li>
+                <li id="goToAlbumPlaylist">Go to album</li>
                 <span></span>
-                <li onclick="player.apiManager.getArtistDetails(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.dirArtist)">Artist details</li>
-                <li onclick="player.apiManager.getSongLyrics(rightClickedObject.target.dataset.artist, rightClickedObject.target.dataset.name)">Song lyrics</li>
+                <li id="artistDetailsPlaylist">Artist details</li>
+                <li id="songLyricsPlaylist">Song lyrics</li>
             </ul>
         </div>
     </div>
 
     <div id="dialogs">
         <dialog id="artistDetailsDialog">
-            <span class="close" onclick="document.getElementById('artistDetailsDialog').close();">&times;</span>
-            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Artist Image">
+            <span class="close">&times;</span>
+            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="Artist Image">
             <p></p>
         </dialog>
 
         <dialog id="songLyricsDialog">
-            <span class="close" onclick="document.getElementById('songLyricsDialog').close();">&times;</span>
+            <span class="close">&times;</span>
             <h1></h1>
             <p></p>
         </dialog>
 
         <dialog id="newPlaylistDialog">
-            <span class="close" onclick="document.getElementById('newPlaylistDialog').close(); document.getElementById('newPlaylistForm').reset();">&times;</span>
-            <form id="newPlaylistForm" onsubmit="validateNewPlaylistForm(event)">
+            <span class="close">&times;</span>
+            <form id="newPlaylistForm">
                 <h1>Create new playlist</h1>
                 <label>
                     Playlist name:
                     <br>
-                    <input type="text" id="playlistNameInp" autocomplete="off" oninput="validateName()">
+                    <input type="text" id="playlistNameInp" autocomplete="off">
                     <p class="formError" id="playlistNameInpError"></p>
                 </label>
                 <label>
                     Playlist cover (optional):
                     <br>
                     <div class="input_container">
-                        <input type="file" id="playlistCoverInp" accept="image/*" onchange="validateCover()">
+                        <input type="file" id="playlistCoverInp" accept="image/*">
                         <p class="formError" id="playlistCoverInpError"></p>
                     </div>
                 </label>
@@ -190,7 +186,7 @@
     </div>
 
     <div id="alert">
-        <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="alert">
+        <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="alert">
         <p></p>
     </div>
 

@@ -4,7 +4,7 @@ export default class ApiManager {
     }
 
     async getArtistDetails(artist = this.Player.rightClickedObject.artist, dirArtist = this.Player.rightClickedObject.dirArtist) {
-        this.Player.showLoader();
+        this.Player.uiManager.showLoader();
 
         async function fetchArtistDetails(baseUrls) {
             let result = [];

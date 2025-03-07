@@ -170,6 +170,7 @@ export default class PlaylistManager {
 
     async save() {
         this.updateContext();
+        this.render();
 
         try {
             await fetch("/api/playlists", {
@@ -192,11 +193,11 @@ export default class PlaylistManager {
                 item.onclick = () => {
                     let song;
                     try {
-                        song = JSON.parse(rightClickedObject.target.dataset.song);
+                        song = JSON.parse(this.Player.rightClickedObject.target.dataset.song);
                     } catch (error) {
-                        song = rightClickedObject;
+                        song = this.Player.rightClickedObject;
                     }
-                    addSong(playlist, song);
+                    this.addSong(playlist, song);
                 };
                 submenu.appendChild(item);
             });

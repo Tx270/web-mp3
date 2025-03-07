@@ -197,5 +197,158 @@ export default class UIManager {
         document.addEventListener("contextmenu", (e) => {
             e.preventDefault();
         });
+
+
+        document.getElementById('searchBox').addEventListener('input', () => {
+            this.Player.uiManager.search(this.value);
+        });
+        document.getElementById('cancelSearch').addEventListener('click', () => {
+            document.getElementById('searchBox').value = '';
+            document.getElementById('searchResults').innerText = '';
+        });
+        document.getElementById('shuffle').addEventListener('click', () => {
+            this.Player.queueManager.shuffle();
+        });
+        document.getElementById('back').addEventListener('click', () => {
+            this.Player.audioManager.previous();
+        });
+        document.getElementById('play').addEventListener('click', () => {
+            this.Player.audioManager.toggle();
+        });
+        document.getElementById('stop').addEventListener('click', () => {
+            this.Player.audioManager.stop();
+        });
+        document.getElementById('next').addEventListener('click', () => {
+            this.Player.audioManager.next();
+        });
+        document.getElementById('clear').addEventListener('click', () => {
+            this.Player.queueManager.clear();
+        });
+    
+        document.getElementById('progress').addEventListener('input', () => {
+            this.Player.audioManager.time();
+        });
+    
+        document.getElementById('volumeRange').addEventListener('input', () => {
+            this.Player.audioManager.volume();
+        });
+    
+        document.getElementById('details').addEventListener('click', () => {
+            if (!this.Player.nowPlaying.blank) this.Player.apiManager.getArtistDetails();
+        });
+    
+        document.getElementById('lyrics').addEventListener('click', () => {
+            if (!this.Player.nowPlaying.blank) this.Player.apiManager.getSongLyrics();
+        });
+    
+        document.getElementById('mute').addEventListener('click', () => {
+            this.Player.audioManager.mute();
+        });
+    
+        document.getElementById('tab-buttons').querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', event => {
+                const targetTab = event.target.textContent;
+                this.Player.uiManager.openTab(event, targetTab);
+            });
+        });        
+    
+        document.getElementById('removeFromQueue').addEventListener('click', () => {
+            this.Player.queueManager.removeSong();
+        });
+    
+        document.getElementById('goToArtist').addEventListener('click', () => {
+            this.Player.uiManager.goToArtist();
+        });
+    
+        document.getElementById('goToAlbum').addEventListener('click', () => {
+            this.Player.uiManager.goToAlbum();
+        });
+    
+        document.getElementById('showInExplorer').addEventListener('click', () => {
+            this.Player.utils.openPath(this.Player.rightClickedObject.path);
+        });
+    
+        document.getElementById('artistDetails').addEventListener('click', () => {
+            this.Player.apiManager.getArtistDetails();
+        });
+    
+        document.getElementById('songLyrics').addEventListener('click', () => {
+            this.Player.apiManager.getSongLyrics();
+        });
+    
+        document.getElementById('addToQueue').addEventListener('click', () => {
+            this.Player.utils.dbClickThis(this.Player.rightClickedObject.target);
+        });
+    
+        document.getElementById('artistDetailsLibrary').addEventListener('click', () => {
+            this.Player.apiManager.getArtistDetails();
+        });
+    
+        document.getElementById('addToQueueAlbum').addEventListener('click', () => {
+            this.Player.utils.dbClickThis(this.Player.rightClickedObject.target);
+        });
+    
+        document.getElementById('addToQueueSong').addEventListener('click', () => {
+            this.Player.utils.dbClickThis(this.Player.rightClickedObject.target);
+        });
+    
+        document.getElementById('showInExplorerSong').addEventListener('click', () => {
+            this.Player.utils.openPath(this.Player.rightClickedObject.path);
+        });
+    
+        document.getElementById('songLyricsSong').addEventListener('click', () => {
+            this.Player.apiManager.getSongLyrics();
+        });
+    
+        document.getElementById('addToQueuePlaylist').addEventListener('click', () => {
+            this.Player.utils.dbClickThis(this.Player.rightClickedObject.target);
+        });
+    
+        document.getElementById('removePlaylist').addEventListener('click', () => {
+            this.Player.playlistManager.removePlaylist(this.Player.rightClickedObject.artist);
+        });
+    
+        document.getElementById('addToQueuePlaylistSong').addEventListener('click', () => {
+            this.Player.utils.dbClickThis(this.Player.rightClickedObject.target);
+        });
+    
+        document.getElementById('removeFromPlaylist').addEventListener('click', () => {
+            this.Player.playlistManager.removeSong(this.Player.rightClickedObject.target.parentElement.querySelector('summary').textContent, this.Player.rightClickedObject.target.dataset.name);
+        });
+    
+        document.getElementById('goToArtistPlaylist').addEventListener('click', () => {
+            this.Player.uiManager.goToArtist(this.Player.rightClickedObject.target.dataset.artist);
+        });
+    
+        document.getElementById('goToAlbumPlaylist').addEventListener('click', () => {
+            this.Player.uiManager.goToAlbum(this.Player.rightClickedObject.target.dataset.album);
+        });
+    
+        document.getElementById('artistDetailsPlaylist').addEventListener('click', () => {
+            this.Player.apiManager.getArtistDetails(this.Player.rightClickedObject.target.dataset.artist, this.Player.rightClickedObject.target.dataset.dirArtist);
+        });
+    
+        document.getElementById('songLyricsPlaylist').addEventListener('click', () => {
+            this.Player.apiManager.getSongLyrics(this.Player.rightClickedObject.target.dataset.artist, this.Player.rightClickedObject.target.dataset.name);
+        });
+    
+        document.querySelectorAll('.close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', (event) => {
+                const dialog = event.target.closest('dialog');
+                dialog.close();
+            });
+        });
+    
+        document.getElementById('newPlaylistForm').addEventListener('submit', (event) => {
+            this.Player.playlistManager.validateNewPlaylistForm(event);
+        });
+    
+        document.getElementById('playlistCoverInp').addEventListener('change', () => {
+            this.Player.playlistManager.validateCover();
+        });
+    
+        document.getElementById('playlistNameInp').addEventListener('input', () => {
+            this.Player.playlistManager.validateName();
+        });
     }
 }
