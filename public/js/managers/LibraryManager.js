@@ -7,11 +7,15 @@ export default class LibraryManager {
         try {
             const response = await fetch('/api/library');
             this.Player.library = await response.json();
-            var letter = "`";
-    
+
             const container = document.getElementById('Library');
-    
-            this.render(container, this.Player.library, letter);
+
+            if (Object.keys(this.Player.library).length === 0 || !this.Player.library) {
+                container.innerHTML = "<div id='libraryError'> <p>No songs found in library.</p> <p>Move or link your mp3 folder to the /public directory and then scan.</p> <button onclick='player.libraryManager.scan()'>Scan</button></div>";
+                return;
+            }
+
+            this.render(container, this.Player.library, true);
     
         } catch (error) {
             this.Player.notificationManager.show('Error loading mp3 library: ' + error.message, true);
@@ -19,17 +23,19 @@ export default class LibraryManager {
         }
     }
 
-    render(container, lib, letter = '') {
+    render(container, lib, letter = false) {
         container.innerHTML = '';
         let first = true;
-    
+        let currentLetter = '';
+
         if (!lib) return;
-    
+
         Object.entries(lib).forEach(([artist, albums]) => {
-            if (letter && artist[0].toLowerCase() !== letter) {
-                letter = String.fromCharCode(letter.charCodeAt(0) + 1);
+            const artistLetter = artist[0].toUpperCase();
+            if (artistLetter !== currentLetter && letter) {
+                currentLetter = artistLetter;
                 var s = document.createElement('span');
-                s.innerText = letter.toUpperCase();
+                s.innerText = currentLetter;
                 s.classList.add("braker");
                 if (first) {
                     first = false;
@@ -38,10 +44,10 @@ export default class LibraryManager {
                 container.appendChild(s);
                 container.appendChild(document.createElement('hr'));
             }
-    
+
             const artistDetails = document.createElement('details');
             artistDetails.classList.add('artist');
-    
+
             const artistSummary = document.createElement('summary');
             artistSummary.classList.add('selectable');
             artistSummary.textContent = artist;
@@ -50,13 +56,13 @@ export default class LibraryManager {
             artistSummary.classList.add("custom-context");
             artistSummary.addEventListener("contextmenu", (e) => { this.Player.uiManager.contextmenu(e, artistSummary.getAttribute("data-menu")); });
             artistSummary.ondblclick = () => { this.Player.queueManager.addSong(Object.entries(albums).flat(Infinity)); };
-    
+
             artistDetails.appendChild(artistSummary);
-    
+
             Object.entries(albums).forEach(([album, songs]) => {
                 const albumDetails = document.createElement('details');
                 albumDetails.classList.add('album');
-    
+
                 const albumSummary = document.createElement('summary');
                 albumSummary.classList.add('selectable');
                 albumSummary.textContent = album;
@@ -65,14 +71,14 @@ export default class LibraryManager {
                 albumSummary.classList.add("custom-context");
                 albumSummary.addEventListener("contextmenu", (e) => { this.Player.uiManager.contextmenu(e, albumSummary.getAttribute("data-menu")); });
                 albumSummary.ondblclick = () => { this.Player.queueManager.addSong(songs); };
-    
+
                 const albumCover = document.createElement('img');
                 albumCover.classList.add("albumCover");
                 albumCover.src = songs[0].cover;
-    
+
                 albumSummary.prepend(albumCover);
                 albumDetails.append(albumSummary);
-    
+
                 songs.forEach(song => {
                     const songSpan = document.createElement('span');
                     songSpan.classList.add('song', 'selectable');
@@ -81,16 +87,16 @@ export default class LibraryManager {
                     songSpan.dataset.menu = "librarySongMenu";
                     songSpan.classList.add("custom-context");
                     songSpan.addEventListener("contextmenu", (e) => { this.Player.uiManager.contextmenu(e, songSpan.getAttribute("data-menu")); });
-    
+
                     songSpan.ondblclick = () => { this.Player.queueManager.addSong([song]); };
                     songSpan.dataset.song = JSON.stringify(song);
-    
+
                     albumDetails.appendChild(songSpan);
                 });
-    
+
                 artistDetails.appendChild(albumDetails);
             });
-    
+
             artistDetails.addEventListener('toggle', () => {
                 if (artistDetails.open && Object.entries(albums).length === 1) {
                     artistDetails.querySelector('.album').open = true;
@@ -103,8 +109,22 @@ export default class LibraryManager {
                     });
                 }
             });
-    
+
             container.appendChild(artistDetails);
         });
+    }
+
+    async scan() {
+        this.Player.uiManager.showLoader();
+        try {
+            await fetch('/api/scan');
+            this.load();
+        } catch (error) {
+            this.Player.uiManager.hideLoader();
+            this.Player.notificationManager.show('Error scanning mp3 library: ' + error.message, true);
+        }
+
+        this.Player.uiManager.hideLoader();
+        this.Player.notificationManager.show('Scaned the mp3 library');
     }
 }

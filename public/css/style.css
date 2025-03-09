@@ -533,6 +533,35 @@ main {
     }
 
     #Library {
+
+      #libraryError {
+        text-align: center;
+        padding: 40px;
+
+        p {
+          font-size: 20px;
+          font-weight: 500;
+          margin-bottom: 20px;
+        }
+
+        button {
+          width: 60%;
+          padding: 10px;
+          font-size: large;
+          transition: .5s;
+          cursor: pointer;
+          background-color: var(--highlight);
+          border: none;
+          border-radius: 7px;
+          margin: 30px;
+          color: var(--text);
+  
+          &:hover {
+            background-color: var(--highlight-heavier);
+          }
+        }
+      }
+      
       .braker {
         display: block;
         line-height: 30px;
@@ -835,8 +864,7 @@ main {
             }
   
             &::file-selector-button:hover {
-              background-color: #eee;
-              color: black;
+              background-color: var(--highlight-heavier);
             }
           }
         }
@@ -855,8 +883,7 @@ main {
         color: var(--text);
 
         &:hover {
-          background-color: #eee;
-          color: black;
+          background-color: var(--highlight-heavier);
         }
       }
     }

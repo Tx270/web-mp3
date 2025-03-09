@@ -186,6 +186,13 @@ export default class PlaylistManager {
     updateContext() {
         document.querySelectorAll(".playlistSubmenu").forEach(submenu => {
             submenu.innerHTML = "";
+
+            if (Object.keys(this.Player.playlists).length === 0 || !this.Player.playlists) {
+                submenu.style.visibility = "hidden";
+                return;
+            } else {
+                submenu.style.visibility = "visible";
+            }
     
             Object.keys(this.Player.playlists).toSorted().forEach(playlist => {
                 let item = document.createElement("li");
