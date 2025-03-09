@@ -81,7 +81,7 @@ export default class AudioManager {
     }
 
     mute() {
-        document.getElementById("volumeRange").value = (volume ? "0" : "1") * 100;
+        document.getElementById("volumeRange").value = (this.Player.volume ? "0" : "1") * 100;
         this.volume();
     }
 

@@ -135,7 +135,6 @@ export default class QueueManager {
             tbody.appendChild(song.element);
         });
 
-        this.Player.notificationManager.show("Queue shuffled");
         this.save();
     }
 
@@ -143,7 +142,7 @@ export default class QueueManager {
         this.Player.queue = [];
         document.getElementById("queue-tbody").innerHTML = '';
         this.Player.audioManager.stop();
-        this.Player.notificationManager.show("Queue cleared");
+
         this.save();
     }
 
