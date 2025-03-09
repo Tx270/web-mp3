@@ -74,8 +74,8 @@
             
         </section>
         <section id="volume">
-            <img src="assets/icons/artist.png" alt="details" id="details" onclick="if(!player.nowPlaying.blank) player.apiManager.getArtistDetails()" title="Artist Details">
-            <img src="assets/icons/microphone.png" alt="lyrics" id="lyrics" onclick="if(!player.nowPlaying.blank) player.apiManager.getSongLyrics()" title="Song Lyrics">
+            <img src="assets/icons/artist.png" alt="details" id="details" onclick="if(!player.nowPlaying.blank) player.apiManager.getArtistDetails(player.nowPlaying.artist, player.nowPlaying.dirArtist)" title="Artist Details">
+            <img src="assets/icons/microphone.png" alt="lyrics" id="lyrics" onclick="if(!player.nowPlaying.blank) player.apiManager.getSongLyrics(player.nowPlaying.artist, player.nowPlaying.name)" title="Song Lyrics">
             <img src="assets/icons/sound.png" alt="mute" id="mute" onclick="player.audioManager.mute()" title="Mute">
             <input type="range" min="0" max="100" step="1" value="100" oninput="player.audioManager.volume()" id="volumeRange">
         </section>
